@@ -1,8 +1,11 @@
 package implementation;
 
+import java.rmi.Naming;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
 
 import interfaces.IAcheteur;
+import interfaces.IServeurVente;
 
 public class Client implements IAcheteur {
 
@@ -25,4 +28,14 @@ public class Client implements IAcheteur {
 		return false;
 	}
 
+	public static void main(String[] args) {
+		IServeurVente serveurVente;
+		try { 
+			 serveurVente = (IServeurVente)Naming.lookup("//mamachine:8800/serveur");
+		} catch (Exception e) {
+			System.out.println("erreur sur client");
+		}
+		
+		
+	}
 }

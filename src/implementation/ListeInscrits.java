@@ -1,5 +1,6 @@
 package implementation;
 
-public class ListeInscrits {
 
+public class ListeInscrits {
+	
 }
