@@ -9,6 +9,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.Scanner;
 
 import interfaces.IAcheteur;
 import interfaces.IServeurVente;
@@ -20,13 +21,33 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 	
 	
 	protected ServeurVente() throws RemoteException {
-		super();
-		// TODO Auto-generated constructor stub
+		participants = new ListeInscrits();
+		objVente = new ObjetEnVente(NouvNomObjet(), NouvDescrObjet());
+	}
+	
+	public String NouvDescrObjet() {
+		Scanner sc = new Scanner(System.in);
+		System.out.print("descr de l'objet : ");
+		String descr = sc.next();
+		sc.close();
+		System.out.println("");
+		return descr;
+	}
+	
+	public String NouvNomObjet() {
+		Scanner sc = new Scanner(System.in);
+		System.out.print("nom de l'objet : ");
+		String nom = sc.next();
+		sc.close();
+		System.out.println("");
+		return nom;
 	}
 
 	@Override
 	public void inscriptionAcheteur(String pseudo, IAcheteur acheteur) throws RemoteException {
-	
+//		synchronized (this) {
+//			
+//		}
 	}
 
 	@Override
@@ -61,7 +82,7 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 			
 			} catch (Exception e) {
 				System.out.println("fail serveur");
-			} 
+			}
 //			catch (MalformedURLException e) {
 //				System.out.println("MalformedURLException");
 //			} catch (UnknownHostException e) {

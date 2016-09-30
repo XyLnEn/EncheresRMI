@@ -10,7 +10,7 @@ import interfaces.IServeurVente;
 public class Client implements IAcheteur {
 
 	@Override
-	public boolean nouvelleSoumission(String descrObjet, int prix)
+	public boolean nouvelleSoumission(ObjetEnVente Objet, int prix)
 			throws RemoteException {
 		// TODO Auto-generated method stub
 		return false;
