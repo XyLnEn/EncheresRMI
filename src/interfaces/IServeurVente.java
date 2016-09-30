@@ -10,4 +10,6 @@ public interface IServeurVente extends Remote {
 	public boolean rencherir(int prix, IAcheteur acheteur) throws RemoteException;
 	
 	public boolean tempsEcoule(IAcheteur acheteur) throws RemoteException;
+	
+	public int testmethode() throws RemoteException;
 }

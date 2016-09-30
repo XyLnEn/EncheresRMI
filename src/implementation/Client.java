@@ -31,7 +31,9 @@ public class Client implements IAcheteur {
 	public static void main(String[] args) {
 		IServeurVente serveurVente;
 		try { 
-			 serveurVente = (IServeurVente)Naming.lookup("//mamachine:8800/serveur");
+			 serveurVente = (IServeurVente)Naming.lookup("//localhost:8802/serveur");
+			 int i = serveurVente.testmethode();
+			 System.out.println(i);
 		} catch (Exception e) {
 			System.out.println("erreur sur client");
 		}

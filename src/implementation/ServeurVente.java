@@ -36,6 +36,10 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 		// TODO Auto-generated method stub
 		return false;
 	}
+	
+	public int testmethode(){
+		return 2+3;
+	}
 
 	public ListeInscrits getParticipants() {
 		return participants;
@@ -43,9 +47,10 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 	
 	public static void main(String[] args) {
 		try {
-			LocateRegistry.createRegistry(8800);
+			LocateRegistry.createRegistry(8802);
 			ServeurVente serveur = new ServeurVente();
-			Naming.bind("//mamachine:8800/serveur", serveur);
+			Naming.bind("//localhost:8802/serveur", serveur);
+			System.out.println("coucou");
 		} catch (Exception e) {
 			System.out.println("erreur sur serveur");
 		}
