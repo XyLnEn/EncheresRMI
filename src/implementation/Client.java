@@ -1,19 +1,21 @@
 package implementation;
 
+import java.applet.Applet;
+
 import java.rmi.Naming;
 import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
 
 import interfaces.IAcheteur;
 import interfaces.IServeurVente;
 
-public class Client implements IAcheteur {
+public class Client extends Applet implements IAcheteur  {
 
+	
 	@Override
-	public boolean nouvelleSoumission(String descrObjet, int prix)
+	public void nouvelleSoumission(String descrObjet, int prix)
 			throws RemoteException {
 		// TODO Auto-generated method stub
-		return false;
+
 	}
 
 	@Override
@@ -23,12 +25,16 @@ public class Client implements IAcheteur {
 	}
 
 	@Override
-	public boolean nouveauPrix(int prix) throws RemoteException {
+	public void nouveauPrix(int prix, String pseudo) throws RemoteException {
 		// TODO Auto-generated method stub
-		return false;
+
 	}
+	
 
 	public static void main(String[] args) {
+		
+		//TODO a mettre le guiclient
+		
 		IServeurVente serveurVente;
 		try { 
 			 serveurVente = (IServeurVente)Naming.lookup("//localhost:8810/serveur");
