@@ -1,8 +1,13 @@
 package implementation;
 
+import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.UnknownHostException;
+import java.rmi.AlreadyBoundException;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
 import interfaces.IAcheteur;
@@ -20,40 +25,50 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 	}
 
 	@Override
-	public boolean inscriptionAcheteur(String pseudo, IAcheteur acheteur) throws RemoteException {
-		
-		return false;
-	}
-
-	@Override
-	public boolean rencherir(int prix, IAcheteur acheteur) throws RemoteException {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean tempsEcoule(IAcheteur acheteur) throws RemoteException {
-		// TODO Auto-generated method stub
-		return false;
-	}
+	public void inscriptionAcheteur(String pseudo, IAcheteur acheteur) throws RemoteException {
 	
-	public int testmethode(){
-		return 2+3;
+	}
+
+	@Override
+	public void rencherir(int prix, IAcheteur acheteur) throws RemoteException {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void tempsEcoule(IAcheteur acheteur) throws RemoteException {
+		// TODO Auto-generated method stub
+
 	}
 
 	public ListeInscrits getParticipants() {
 		return participants;
 	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws RemoteException {
 		try {
-			LocateRegistry.createRegistry(8802);
 			ServeurVente serveur = new ServeurVente();
-			Naming.bind("//localhost:8802/serveur", serveur);
-			System.out.println("coucou");
-		} catch (Exception e) {
-			System.out.println("erreur sur serveur");
-		}
+			Registry registry = LocateRegistry.createRegistry(8810);
+		
+//			String url;
+//			url = "rmi://" + InetAddress.getLocalHost().getHostAddress() + "/serveur";
+//			System.out.println("Enregistrement de l'objet avec l'url : " + url);
+//			Naming.bind(url, serveur);
+			
+
+			System.out.println("Serveur lancé");
+			Naming.bind("//localhost:8810/serveur", serveur);
+			
+			} catch (Exception e) {
+				System.out.println("fail serveur");
+			} 
+//			catch (MalformedURLException e) {
+//				System.out.println("MalformedURLException");
+//			} catch (UnknownHostException e) {
+//				System.out.println("UnknownHostException");
+//			} catch (AlreadyBoundException e) {
+//				System.out.println("AlreadyBoundException");
+//			}
 		
 		
 	}
