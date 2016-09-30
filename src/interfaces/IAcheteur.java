@@ -11,6 +11,6 @@ public interface IAcheteur extends Remote {
 	
 	public void objetVendu() throws RemoteException;
 	
-	public boolean nouveauPrix(int prix) throws RemoteException;
+	public void nouveauPrix(int prix, String pseudo) throws RemoteException;
 	
 }
