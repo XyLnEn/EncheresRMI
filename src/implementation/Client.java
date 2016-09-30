@@ -12,12 +12,7 @@ public class Client extends Applet implements IAcheteur  {
 
 	
 	@Override
-<<<<<<< HEAD
-	public boolean nouvelleSoumission(ObjetEnVente Objet, int prix)
-=======
-	public void nouvelleSoumission(String descrObjet, int prix)
->>>>>>> 69704cbdd7f0e14263d4777f7c7e4336c0ab8c39
-			throws RemoteException {
+	public void nouvelleSoumission(ObjetEnVente Objet, int prix) throws RemoteException {
 		// TODO Auto-generated method stub
 
 	}

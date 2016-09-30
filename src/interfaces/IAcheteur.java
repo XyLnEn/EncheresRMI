@@ -7,7 +7,7 @@ import java.rmi.RemoteException;
 
 public interface IAcheteur extends Remote {
 
-	public boolean nouvelleSoumission(ObjetEnVente Objet, int prix) throws RemoteException;
+	public void nouvelleSoumission(ObjetEnVente Objet, int prix) throws RemoteException;
 	
 	public void objetVendu() throws RemoteException;
 	
