@@ -1,14 +1,14 @@
 package implementation.client;
 
-import java.applet.Applet;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 
+import ihm.IHMClient;
 import implementation.serveur.ObjetEnVente;
 import interfaces.IAcheteur;
 import interfaces.IServeurVente;
 
-public class Client extends Applet implements IAcheteur  {
+public class Client implements IAcheteur  {
 
 	
 	@Override
@@ -32,7 +32,7 @@ public class Client extends Applet implements IAcheteur  {
 
 	public static void main(String[] args) {
 		
-		//TODO a mettre le guiclient
+		IHMClient guiclient = new IHMClient();
 		
 		IServeurVente serveurVente;
 		try { 
