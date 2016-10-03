@@ -1,4 +1,4 @@
-package implementation;
+package implementation.serveur;
 
 import interfaces.IAcheteur;
 

@@ -1,6 +1,6 @@
 package interfaces;
 
-import implementation.ObjetEnVente;
+import implementation.serveur.ObjetEnVente;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;

@@ -1,10 +1,10 @@
-package implementation;
+package implementation.client;
 
 import java.applet.Applet;
-
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 
+import implementation.serveur.ObjetEnVente;
 import interfaces.IAcheteur;
 import interfaces.IServeurVente;
 

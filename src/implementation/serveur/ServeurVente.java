@@ -1,4 +1,4 @@
-package implementation;
+package implementation.serveur;
 
 import java.net.InetAddress;
 import java.net.MalformedURLException;
@@ -102,7 +102,7 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 		}
 	}
 
-	//possibilité d'un round ou encheres != 0 mais toutes en dessous du prix serv? possibilité d'enchere ou prix <= prix courant client?
+	//possibilitï¿½ d'un round ou encheres != 0 mais toutes en dessous du prix serv? possibilitï¿½ d'enchere ou prix <= prix courant client?
 	@Override
 	public synchronized void rencherir(int prix, IAcheteur acheteur) throws RemoteException {
 		Enchere ench = new Enchere(acheteur, prix);
