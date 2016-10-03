@@ -21,6 +21,7 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 	private ObjetEnVente objVente;
 	private int prix;
 	private ListeEncheres encheres;
+	private boolean venteEnCours;
 	
 	
 	protected ServeurVente() throws RemoteException {
@@ -55,15 +56,30 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 		System.out.println("");
 		return prix;
 	}
+	
+	public void DebutVente() throws RemoteException {
+		venteEnCours = true;
+		encheres.getListeEnchere().clear();//pour eviter les encheres fantomes
+		for (IAcheteur ach: participants.getInscrits().keySet()) {
+			ach.nouvelleSoumission(objVente, prix);
+		}
+		
+	}
 
 	@Override
 	public synchronized void inscriptionAcheteur(String pseudo, IAcheteur acheteur) throws RemoteException {
-		participants.add(acheteur, pseudo);
+		try {
+			while(venteEnCours) {
+				wait();
+			}
+			participants.add(acheteur, pseudo);
+			notifyAll();//pour declencher une chaine d'inscription
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
-	public void acheteurToPseudo(IAcheteur acheteur) {
-		//Renvoie le pseudo en fonction de l'acheteur
-	}
 	
 	public void realiserRoundEnchere() {
 		boolean enchereFinie = true;
@@ -88,6 +104,9 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 					e1.printStackTrace();
 				}
 			}
+			venteEnCours = false;
+			notifyAll();
+			
 		}
 		else {
 			//prevenir tout client du resultat du round
@@ -102,7 +121,7 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 		}
 	}
 
-	//possibilit� d'un round ou encheres != 0 mais toutes en dessous du prix serv? possibilit� d'enchere ou prix <= prix courant client?
+	//possibilite d'un round ou encheres != 0 mais toutes en dessous du prix serv? possibilit� d'enchere ou prix <= prix courant client?
 	@Override
 	public synchronized void rencherir(int prix, IAcheteur acheteur) throws RemoteException {
 		Enchere ench = new Enchere(acheteur, prix);
