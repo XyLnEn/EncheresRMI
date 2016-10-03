@@ -12,6 +12,10 @@ public class ListeInscrits {
 		inscrits = new Vector<Participant>();
 	}
 	
+	public int taille() {
+		return inscrits.size();
+	}
+	
 	public void add(String pseudo, IAcheteur ach) {
 		synchronized (this) {
 			inscrits.add(new Participant(pseudo, ach));

@@ -18,11 +18,14 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 
 	private ListeInscrits participants;
 	private ObjetEnVente objVente;
+	private int prix;
+	private ListeEncheres encheres;
 	
 	
 	protected ServeurVente() throws RemoteException {
 		participants = new ListeInscrits();
-		objVente = new ObjetEnVente(NouvNomObjet(), NouvDescrObjet());
+		setObjVente(new ObjetEnVente(NouvNomObjet(), NouvDescrObjet()));
+		prix = NouvPrix();
 	}
 	
 	public String NouvDescrObjet() {
@@ -42,17 +45,24 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 		System.out.println("");
 		return nom;
 	}
-
-	@Override
-	public void inscriptionAcheteur(String pseudo, IAcheteur acheteur) throws RemoteException {
-//		synchronized (this) {
-//			
-//		}
+	
+	public int NouvPrix() {
+		Scanner sc = new Scanner(System.in);
+		System.out.print("prix de l'objet : ");
+		int prix = sc.nextInt();
+		sc.close();
+		System.out.println("");
+		return prix;
 	}
 
 	@Override
-	public void rencherir(int prix, IAcheteur acheteur) throws RemoteException {
-		// TODO Auto-generated method stub
+	public synchronized void inscriptionAcheteur(String pseudo, IAcheteur acheteur) throws RemoteException {
+		participants.add(pseudo, acheteur);
+	}
+
+	//possibilité d'un round ou encheres != 0 mais toutes en dessous du prix serv? possibilité d'enchere ou prix <= prix courant client?
+	@Override
+	public synchronized void rencherir(int prix, IAcheteur acheteur) throws RemoteException {
 
 	}
 
@@ -83,6 +93,8 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 			} catch (Exception e) {
 				System.out.println("fail serveur");
 			}
+		
+		
 //			catch (MalformedURLException e) {
 //				System.out.println("MalformedURLException");
 //			} catch (UnknownHostException e) {
@@ -92,5 +104,29 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 //			}
 		
 		
+	}
+
+	public ListeEncheres getEncheres() {
+		return encheres;
+	}
+
+	public void setEncheres(ListeEncheres encheres) {
+		this.encheres = encheres;
+	}
+
+	public ObjetEnVente getObjVente() {
+		return objVente;
+	}
+
+	public void setObjVente(ObjetEnVente objVente) {
+		this.objVente = objVente;
+	}
+
+	public int getPrix() {
+		return prix;
+	}
+
+	public void setPrix(int prix) {
+		this.prix = prix;
 	}
 }
