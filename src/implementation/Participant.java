@@ -4,11 +4,11 @@ import interfaces.IAcheteur;
 
 public class Participant {
 	private String pseudo;
-	private IAcheteur ach;
+	private IAcheteur acheteur;
 	
 	public Participant(String ps, IAcheteur a) {
 		pseudo = ps;
-		ach = a;
+		acheteur = a;
 	}
 
 	public String getPseudo() {
@@ -19,12 +19,12 @@ public class Participant {
 		this.pseudo = pseudo;
 	}
 
-	public IAcheteur getAch() {
-		return ach;
+	public IAcheteur getAcheteur() {
+		return acheteur;
 	}
 
-	public void setAch(IAcheteur ach) {
-		this.ach = ach;
+	public void setAcheteur(IAcheteur ach) {
+		this.acheteur = ach;
 	}
 	
 	
