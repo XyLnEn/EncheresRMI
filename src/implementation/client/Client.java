@@ -10,22 +10,29 @@ import interfaces.IServeurVente;
 
 public class Client implements IAcheteur  {
 
-	
+	private String nom;
+	private String id;
+	private int prix;
+	private ObjetEnVente obj;
+	private String nomMaxDonnateur;
+
 	@Override
 	public void nouvelleSoumission(ObjetEnVente Objet, int prix) throws RemoteException {
-		// TODO Auto-generated method stub
+		obj = Objet;
+		this.prix = prix;
 
 	}
 
 	@Override
 	public void objetVendu() throws RemoteException {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void nouveauPrix(int prix, String pseudo) throws RemoteException {
-		// TODO Auto-generated method stub
+		this.prix = prix;
+		nomMaxDonnateur = pseudo;
 
 	}
 	
