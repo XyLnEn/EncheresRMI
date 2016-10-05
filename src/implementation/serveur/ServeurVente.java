@@ -3,6 +3,7 @@ package implementation.serveur;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.UnknownHostException;
+import java.rmi.AccessException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
@@ -21,38 +22,35 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 	private ObjetEnVente objVente;
 	private int prix;
 	private ListeEncheres encheres;
-	private boolean venteEnCours;
+	private boolean venteEnCours = false;
 	
 	
 	protected ServeurVente() throws RemoteException {
+		Scanner sc = new Scanner(System.in);
 		participants = new ListeInscrits();
-		setObjVente(new ObjetEnVente(NouvNomObjet(), NouvDescrObjet()));
-		prix = NouvPrix();
+		String nom = this.NouvNomObjet(sc);
+		String descr = this.NouvDescrObjet(sc);
+		setObjVente(new ObjetEnVente(nom,descr));
+		prix = this.NouvPrix(sc);
 	}
 	
-	public String NouvDescrObjet() {
-		Scanner sc = new Scanner(System.in);
+	public String NouvDescrObjet(Scanner sc) {
 		System.out.print("descr de l'objet : ");
-		String descr = sc.next();
-		sc.close();
+		String descr = sc.nextLine();
 		System.out.println("");
 		return descr;
 	}
 	
-	public String NouvNomObjet() {
-		Scanner sc = new Scanner(System.in);
+	public String NouvNomObjet(Scanner sc) {
 		System.out.print("nom de l'objet : ");
-		String nom = sc.next();
-		sc.close();
+		String nom = sc.nextLine();
 		System.out.println("");
 		return nom;
 	}
 	
-	public int NouvPrix() {
-		Scanner sc = new Scanner(System.in);
+	public int NouvPrix(Scanner sc) {
 		System.out.print("prix de l'objet : ");
 		int prix = sc.nextInt();
-		sc.close();
 		System.out.println("");
 		return prix;
 	}
@@ -73,11 +71,12 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 				wait();
 			}
 			participants.add(acheteur, pseudo);
-			notifyAll();//pour declencher une chaine d'inscription
+			notify();//pour declencher une chaine d'inscription
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		System.out.println("fin inscription");
 	}
 	
 	
@@ -136,39 +135,36 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 		// TODO Auto-generated method stub
 
 	}
-
-	public ListeInscrits getParticipants() {
-		return participants;
+	
+	public static void bindingServeur(String adresse, IServeurVente serveur) {
+		try {
+			Registry registry = LocateRegistry.createRegistry(8810);
+			registry.rebind(adresse, serveur);
+		} catch (AccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        System.err.println("Server ready");
 	}
 	
 	public static void main(String[] args) throws RemoteException {
-		try {
-			ServeurVente serveur = new ServeurVente();
-			Registry registry = LocateRegistry.createRegistry(8810);
+		
+		IServeurVente serveur = new ServeurVente();
+		bindingServeur("//localhost:8810/serveur", serveur);
 		
 //			String url;
 //			url = "rmi://" + InetAddress.getLocalHost().getHostAddress() + "/serveur";
 //			System.out.println("Enregistrement de l'objet avec l'url : " + url);
 //			Naming.bind(url, serveur);
-			
-
-			System.out.println("Serveur lancé");
-			Naming.bind("//localhost:8810/serveur", serveur);
-			
-			} catch (Exception e) {
-				System.out.println("fail serveur");
-			}
 		
 		
-//			catch (MalformedURLException e) {
-//				System.out.println("MalformedURLException");
-//			} catch (UnknownHostException e) {
-//				System.out.println("UnknownHostException");
-//			} catch (AlreadyBoundException e) {
-//				System.out.println("AlreadyBoundException");
-//			}
-		
-		
+	}
+	
+	public ListeInscrits getParticipants() {
+		return participants;
 	}
 
 	public ListeEncheres getEncheres() {
