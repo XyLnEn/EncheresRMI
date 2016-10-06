@@ -1,5 +1,10 @@
 package implementation.client;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+
+
 import java.io.Serializable;
 import java.rmi.AccessException;
 import java.rmi.Naming;
@@ -13,7 +18,9 @@ import implementation.serveur.ObjetEnVente;
 import interfaces.IAcheteur;
 import interfaces.IServeurVente;
 
-public class Client implements IAcheteur, Serializable{
+public class Client implements IAcheteur, Serializable {
+	
+	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);//permet gestion des affichages consoles
 
 	private String nom;
 	private String id;
@@ -31,18 +38,22 @@ public class Client implements IAcheteur, Serializable{
 		this.prixObjEnEnchere = prix;
 		this.obj = obj;
 		this.nomMaxDonnateur = nomMaxDonnateur;
+		LOGGER.setLevel(Level.INFO);
 	}
 
 	@Override
 	public void nouvelleSoumission(ObjetEnVente Objet, int prix) throws RemoteException {
 		obj = Objet;
 		this.prixObjEnEnchere = prix;
+		LOGGER.info("objet:" + obj.getNom());
+		LOGGER.info("descr:" + obj.getDescription());
+		LOGGER.info("prix:" + this.getPrix());
 
 	}
 
 	@Override
 	public void objetVendu() throws RemoteException {
-		
+		LOGGER.info("objet vendu");
 		
 	}
 
@@ -50,6 +61,8 @@ public class Client implements IAcheteur, Serializable{
 	public void nouveauPrix(int prix, String pseudo) throws RemoteException {
 		this.prixObjEnEnchere = prix;
 		nomMaxDonnateur = pseudo;
+		LOGGER.info("Nouveau prix : " + prix);
+		LOGGER.info("envoye par " + pseudo);
 
 	}
 	
@@ -69,7 +82,7 @@ public class Client implements IAcheteur, Serializable{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println("ok");
+		LOGGER.info("connexion etablie");
 		return serveurVente;
 		
 	}

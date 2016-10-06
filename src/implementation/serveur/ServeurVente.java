@@ -1,22 +1,22 @@
 package implementation.serveur;
 
-import java.net.InetAddress;
-import java.net.MalformedURLException;
-import java.net.UnknownHostException;
 import java.rmi.AccessException;
-import java.rmi.AlreadyBoundException;
-import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import interfaces.IAcheteur;
 import interfaces.IServeurVente;
 
 public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
+
+	
+	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);//permet gestion des affichages consoles
 
 	private ListeInscrits participants;
 	private ObjetEnVente objVente;
@@ -32,24 +32,25 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 		String descr = this.NouvDescrObjet(sc);
 		setObjVente(new ObjetEnVente(nom,descr));
 		prix = this.NouvPrix(sc);
+		LOGGER.setLevel(Level.INFO);
 	}
 	
 	public String NouvDescrObjet(Scanner sc) {
-		System.out.print("descr de l'objet : ");
+		LOGGER.warning("descr de l'objet : ");
 		String descr = sc.nextLine();
 		System.out.println("");
 		return descr;
 	}
 	
 	public String NouvNomObjet(Scanner sc) {
-		System.out.print("nom de l'objet : ");
+		LOGGER.warning("nom de l'objet : ");
 		String nom = sc.nextLine();
 		System.out.println("");
 		return nom;
 	}
 	
 	public int NouvPrix(Scanner sc) {
-		System.out.print("prix de l'objet : ");
+		LOGGER.warning("prix de l'objet : ");
 		int prix = sc.nextInt();
 		System.out.println("");
 		return prix;
@@ -66,57 +67,65 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 
 	@Override
 	public synchronized void inscriptionAcheteur(String pseudo, IAcheteur acheteur) throws RemoteException {
+		LOGGER.warning("Demande d'inscription de " + pseudo + " bien reçue");
 		try {
 			while(venteEnCours) {
 				wait();
 			}
+			LOGGER.info("traitement...");
 			participants.add(acheteur, pseudo);
 			notify();//pour declencher une chaine d'inscription
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println("fin inscription");
+		LOGGER.warning("fin inscription");
 	}
 	
-	
-	public void realiserRoundEnchere() {
-		boolean enchereFinie = true;
-		Enchere e = new Enchere(null, -1);
+	public Enchere getBestEnchere() {
+		Enchere gagnante = new Enchere(null, 0);
 		for (Enchere current : encheres.getListeEnchere()) {
-			if(current.getEnchere() != 0) {
-				enchereFinie = false;
-			}
 			if (this.prix < current.getEnchere()) {
-				e.setEnchere(current.getEnchere());
-				e.setEnchereur(current.getEnchereur());
+				gagnante.setEnchere(current.getEnchere());
+				gagnante.setEnchereur(current.getEnchereur());
 				this.prix = current.getEnchere();
 			}
 		}
-		if(enchereFinie) {
-			//cas enchere finie
-			for (Map.Entry<IAcheteur, String> entry : participants.getInscrits().entrySet()) {//iteration sur chaque inscrits
-				try {
-					entry.getKey().objetVendu();
-				} catch (RemoteException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+		return gagnante;
+	}
+	
+	public void finEnchere() {
+		for (Map.Entry<IAcheteur, String> entry : participants.getInscrits().entrySet()) {//iteration sur chaque inscrits
+			try {
+				entry.getKey().objetVendu();
+			} catch (RemoteException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
 			}
-			venteEnCours = false;
-			notifyAll();
-			
+		}
+		venteEnCours = false;
+//		notifyAll();
+	}
+	
+	public void FinRoundEnchere(Enchere gagnante) {
+		for (Map.Entry<IAcheteur, String> entry : participants.getInscrits().entrySet()) {//iteration sur chaque inscrits
+			try {
+				entry.getKey().nouveauPrix(gagnante.getEnchere(), participants.getPseudo(gagnante.getEnchereur()));
+			} catch (RemoteException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
+	}
+	
+	public void realiserRoundEnchere() {
+		Enchere gagnante = getBestEnchere();
+		boolean enchereFinie = (gagnante.getEnchere() == 0);//pour detecter si personne n'a fait d'encheres
+		if(enchereFinie) {
+			finEnchere();
 		}
 		else {
-			//prevenir tout client du resultat du round
-			for (Map.Entry<IAcheteur, String> entry : participants.getInscrits().entrySet()) {//iteration sur chaque inscrits
-				try {
-					entry.getKey().nouveauPrix(e.getEnchere(), participants.getPseudo(e.getEnchereur()));
-				} catch (RemoteException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			}
+			FinRoundEnchere(gagnante);
 		}
 	}
 
@@ -150,16 +159,30 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
         System.err.println("Server ready");
 	}
 	
+	public void attenteDeDebutEnchere(int x) {
+		while(participants.taille() < x) {
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		for(IAcheteur ach : participants.getInscrits().keySet()) {
+			try {
+				ach.nouvelleSoumission(objVente, prix);
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	public static void main(String[] args) throws RemoteException {
 		
 		IServeurVente serveur = new ServeurVente();
 		bindingServeur("//localhost:8810/serveur", serveur);
-		
-//			String url;
-//			url = "rmi://" + InetAddress.getLocalHost().getHostAddress() + "/serveur";
-//			System.out.println("Enregistrement de l'objet avec l'url : " + url);
-//			Naming.bind(url, serveur);
-		
+		((ServeurVente)serveur).attenteDeDebutEnchere(3);
 		
 	}
 	
