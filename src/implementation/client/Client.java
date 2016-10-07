@@ -89,7 +89,7 @@ public class Client implements IAcheteur, Serializable {
 	
 
 	public static void main(String[] args) {
-		IHMClient guiclient = new IHMClient();
+//		IHMClient guiclient = new IHMClient();
 		IAcheteur cli = new Client("bob","1",-1,null,null);
 		IServeurVente serveurVente = bindingClient("//localhost:8810/serveur",cli);
 		try {
