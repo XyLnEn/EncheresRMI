@@ -89,8 +89,8 @@ public class Client implements IAcheteur, Serializable {
 
 	}
 	
-	
-	public static IServeurVente bindingClient(String adresse) {
+	//static
+	public IServeurVente bindingClient(String adresse) {
 		IServeurVente serveurVente = null;
 		try {
 			Registry registry = LocateRegistry.getRegistry(8810);
@@ -134,12 +134,10 @@ public class Client implements IAcheteur, Serializable {
 	
 
 	public static void main(String[] args) {
-//		IHMClient guiclient = new IHMClient();
-		IHMInscription inscrit = new IHMInscription();
-		// Alicia ? qui a quoi
-		IAcheteur cli = new Client(inscrit.getTexte());
-		((Client)cli).setServ(bindingClient("//localhost:8810/serveur"));
-		((Client)cli).envoiInscription(inscrit.getTexte());
+//		IHMInscription inscrit = new IHMInscription();
+//		IAcheteur cli = new Client(inscrit.getTexte());
+//		((Client)cli).setServ(bindingClient("//localhost:8810/serveur"));
+//		((Client)cli).envoiInscription(inscrit.getTexte());
 	}
 
 	public String getNom() {

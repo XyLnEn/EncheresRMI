@@ -1,6 +1,7 @@
 package ihm;
 
 import implementation.client.Client;
+import interfaces.IAcheteur;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,11 +15,11 @@ public class IHMInscription extends JFrame implements ActionListener{
 
 	private static final long serialVersionUID = 1L;
 
+	private Client client = null;
 	
 	private JPanel panelPrincipal;
 	private JTextField labelPseudo;
 	private JButton btnPseudo;
-	private String texte;
 	
 	public IHMInscription() {
 		demandePseudo();
@@ -44,16 +45,11 @@ public class IHMInscription extends JFrame implements ActionListener{
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		setTexte(labelPseudo.getText());
+		String texte = (labelPseudo.getText());
+		client = new Client(texte);
+		client.setServ(client.bindingClient("//localhost:8810/serveur"));
+		client.envoiInscription(texte);
 		new IHMClient();
 	}
 	
-
-	public String getTexte() {
-		return texte;
-	}
-
-	public void setTexte(String texte) {
-		this.texte = texte;
-	}
 }

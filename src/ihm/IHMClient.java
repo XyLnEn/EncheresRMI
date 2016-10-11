@@ -1,5 +1,6 @@
 package ihm;
 
+import implementation.client.Client;
 import interfaces.IAcheteur;
 
 import java.awt.BorderLayout;
@@ -25,7 +26,7 @@ public class IHMClient extends JFrame {
 	
 	private static final long serialVersionUID = 1L;
 
-	private IAcheteur client = null;
+	private Client client = null;
 	
 	private JPanel panelPrincipal;
 	private JPanel panelImage;
@@ -113,7 +114,7 @@ public class IHMClient extends JFrame {
 	}
 
 	public static void main(String[] args) {
-//		new IHMInscription();
+		new IHMInscription();
 //		new IHMClient();
 	}
 	
