@@ -1,5 +1,6 @@
 package implementation.client;
 
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -24,6 +25,9 @@ public class Client implements IAcheteur, Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	private final static int portConnexion = 8811;
+	private final static String nomServeur = "//localhost:" + portConnexion + "/serveur";
+	
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);//permet gestion des affichages consoles
 
 	private String nom;
@@ -60,6 +64,12 @@ public class Client implements IAcheteur, Serializable {
 		LOGGER.setLevel(Level.INFO);
 	}
 
+	public void envoyerPrix(){
+		Scanner sc = new Scanner(System.in);
+		LOGGER.info("nouveau prix : ");
+		int newprix = sc.nextInt();
+		this.envoiRencherir(newprix, this.serv);
+	}
 
 	@Override
 	public void nouvelleSoumission(ObjetEnVente Objet, int prix) throws RemoteException {
@@ -69,7 +79,7 @@ public class Client implements IAcheteur, Serializable {
 		LOGGER.info("objet:" + obj.getNom());
 		LOGGER.info("descr:" + obj.getDescription());
 		LOGGER.info("prix:" + this.getPrix());
-		this.envoiRencherir(prix, this.serv);
+		this.envoyerPrix();
 	}
 
 	@Override
@@ -86,14 +96,14 @@ public class Client implements IAcheteur, Serializable {
 		nomMaxDonnateur = pseudo;
 		LOGGER.info("Nouveau prix : " + prix);
 		LOGGER.info("envoye par " + pseudo);
-
+		this.envoyerPrix();
 	}
 	
 	//static
 	public IServeurVente bindingClient(String adresse) {
 		IServeurVente serveurVente = null;
 		try {
-			Registry registry = LocateRegistry.getRegistry(8810);
+			Registry registry = LocateRegistry.getRegistry(portConnexion);
 			serveurVente = (IServeurVente)registry.lookup(adresse);
 			
 		} catch (AccessException e) {
@@ -137,6 +147,12 @@ public class Client implements IAcheteur, Serializable {
 //		IHMInscription inscrit = new IHMInscription();
 //		IAcheteur cli = new Client(inscrit.getTexte());
 //		((Client)cli).setServ(bindingClient("//localhost:8810/serveur"));
+//		((Client)cli).envoiInscription(inscrit.getTexte());
+//		IHMClient guiclient = new IHMClient();
+//		IHMInscription inscrit = new IHMInscription();
+//		// Alicia ? qui a quoi
+//		IAcheteur cli = new Client(inscrit.getTexte());
+//		((Client)cli).setServ(bindingClient(nomServeur));
 //		((Client)cli).envoiInscription(inscrit.getTexte());
 	}
 

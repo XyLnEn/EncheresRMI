@@ -8,6 +8,7 @@ import java.util.List;
 public class ListeObjetEnVente {
 
 	private List<ObjetEnVente> objetsVentes = new ArrayList<ObjetEnVente>();
+	private int ObjetActuel = 0;
 	
 
 	public ListeObjetEnVente() {
@@ -32,6 +33,19 @@ public class ListeObjetEnVente {
 			System.out.println("Prix initial de l'objet : " + obj.getPrix());
 			System.out.println("Lien de l'image de l'objet : " + obj.getImage());
 		}
+	}
+	
+	public ObjetEnVente getObjet() {
+		if(ObjetActuel < objetsVentes.size() ){
+			return objetsVentes.get(ObjetActuel);
+		}else {
+			return null;
+		}
+	}
+	
+	public ObjetEnVente getnextObjet() {
+		ObjetActuel++;
+		return getObjet();
 	}
 	
 	public List<ObjetEnVente> getObjetsVentes() {

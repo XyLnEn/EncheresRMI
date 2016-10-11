@@ -6,7 +6,6 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -16,20 +15,26 @@ import interfaces.IServeurVente;
 
 public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 
+	private final static int portConnexion = 8811;
+	private final static String nomServeur = "//localhost:" + portConnexion + "/serveur";
 	
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);//permet gestion des affichages consoles
 
 	private ListeInscrits participants;
 	private ListeObjetEnVente listeObjsVentes;
 	private ObjetEnVente objVente;
-	private int prix;
+	private int prixActuel;
 	private ListeEncheres encheres;
 	private boolean venteEnCours = false;
 	
 	
 	protected ServeurVente() throws RemoteException {
-		listeObjsVentes = new ListeObjetEnVente();
-		objVente = listeObjsVentes.getObjetsVentes().get(0);
+
+		this.participants = new ListeInscrits();
+		this.listeObjsVentes = new ListeObjetEnVente();
+		this.objVente = listeObjsVentes.getObjet();
+		this.prixActuel = this.objVente.getPrix();
+		this.encheres = new ListeEncheres();
 		LOGGER.setLevel(Level.INFO);
 	}
 	
@@ -69,18 +74,7 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 //		return prix;
 //	}
 	
-	/**@author lenny
-	 * methode qui annonce le nouvel objet a vendre
-	 * @throws RemoteException
-	 */
-	public void DebutVente() throws RemoteException {
-		venteEnCours = true;
-		encheres.getListeEnchere().clear();//pour eviter les encheres fantomes
-		for (IAcheteur ach: participants.getInscrits().keySet()) {
-			ach.nouvelleSoumission(objVente, prix);
-		}
-		
-	}
+/******************************Debut des methodes pour gerer l'inscription des Clients******************************/
 
 	/*(non-Javadoc)
 	 * @see interfaces.IServeurVente#inscriptionAcheteur(java.lang.String, interfaces.IAcheteur)
@@ -102,6 +96,10 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 		LOGGER.info("fin inscription");
 	}
 	
+/******************************Fin des methodes pour gerer l'inscription des Clients******************************/
+
+/******************************Debut des methodes pour realiser l'enchere******************************/
+	
 	/** @author lenny
 	 * methode qui determine quelle enchere est la gagnante
 	 * @return gagnante l'enchere la plus eleve 
@@ -109,10 +107,10 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 	public Enchere getBestEnchere() {
 		Enchere gagnante = new Enchere(null, 0);
 		for (Enchere current : encheres.getListeEnchere()) {
-			if (this.prix < current.getEnchere()) {
+			if (this.prixActuel < current.getEnchere()) {
 				gagnante.setEnchere(current.getEnchere());
 				gagnante.setEnchereur(current.getEnchereur());
-				this.prix = current.getEnchere();
+				this.prixActuel = current.getEnchere();
 			}
 		}
 		return gagnante;
@@ -186,23 +184,25 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 
 	}
 	
+/******************************Fin des methodes pour realiser l'enchere******************************/
+
+/******************************Debut des methodes pour la gestion du Serveur******************************/
+	
 	/**@author lenny
-	 * prepare le serveur pour la connexion des clients
-	 * @param adresse
-	 * @param serveur
+	 * methode qui annonce le nouvel objet a vendre
+	 * @throws RemoteException
 	 */
-	public static void bindingServeur(String adresse, IServeurVente serveur) {
-		try {
-			Registry registry = LocateRegistry.createRegistry(8810);
-			registry.rebind(adresse, serveur);
-		} catch (AccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	public void DebutVente() throws RemoteException {
+		venteEnCours = true;
+		encheres.getListeEnchere().clear();//pour eviter les encheres fantomes
+		objVente = listeObjsVentes.getnextObjet();
+		prixActuel = objVente.getPrix();
+		if(objVente != null) {
+			for (IAcheteur ach: participants.getInscrits().keySet()) {
+				ach.nouvelleSoumission(objVente, prixActuel);
+			}
 		}
-		LOGGER.info("Server ready");
+		
 	}
 	
 	/**@author lenny
@@ -220,7 +220,7 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 		}
 		for(IAcheteur ach : participants.getInscrits().keySet()) {
 			try {
-				ach.nouvelleSoumission(objVente, prix);
+				ach.nouvelleSoumission(objVente, prixActuel);
 			} catch (RemoteException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -228,14 +228,42 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 		}
 	}
 	
+	/**@author lenny
+	 * prepare le serveur pour la connexion des clients
+	 * @param adresse
+	 * @param serveur
+	 */
+	public static void bindingServeur(String adresse, IServeurVente serveur) {
+		try {
+			Registry registry = LocateRegistry.createRegistry(portConnexion);
+			registry.rebind(adresse, serveur);
+		} catch (AccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		LOGGER.info("Server ready");
+	}
+	
+	
+/******************************Fin des methodes pour la gestion du Serveur******************************/
+
+/******************************Debut du main du Serveur******************************/
+
 	public static void main(String[] args) throws RemoteException {
 		
 		IServeurVente serveur = new ServeurVente();
-		bindingServeur("//localhost:8810/serveur", serveur);
+		bindingServeur(nomServeur, serveur);
 		((ServeurVente)serveur).attenteDeDebutEnchere(3);
 		
 		
 	}
+	
+/******************************Fin du main du Serveur******************************/
+
+/******************************Getteurs/setteurs******************************/
 	
 	public ListeInscrits getParticipants() {
 		return participants;
@@ -258,10 +286,10 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 	}
 
 	public int getPrix() {
-		return prix;
+		return prixActuel;
 	}
 
 	public void setPrix(int prix) {
-		this.prix = prix;
+		this.prixActuel = prix;
 	}
 }
