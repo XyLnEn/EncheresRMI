@@ -100,9 +100,8 @@ public class Client implements IAcheteur, Serializable {
 		IServeurVente serveurVente = bindingClient("//localhost:8810/serveur",cli);
 		
 		try {
-			serveurVente.inscriptionAcheteur("toto", cli);
+			serveurVente.inscriptionAcheteur(inscrit.getTexte(), cli);
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

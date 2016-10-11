@@ -211,7 +211,7 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 	 * attend qu'un nombre x de clients soit pret pour lancer l'enchere
 	 * @param x
 	 */
-	public void attenteDeDebutEnchere(int x) {
+	public synchronized void attenteDeDebutEnchere(int x) {
 		while(participants.taille() < x) {
 			try {
 				wait();

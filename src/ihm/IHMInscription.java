@@ -45,6 +45,7 @@ public class IHMInscription extends JFrame implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		setTexte(labelPseudo.getText());
+		new IHMClient();
 	}
 	
 

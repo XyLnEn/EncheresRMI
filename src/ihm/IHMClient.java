@@ -112,9 +112,9 @@ public class IHMClient extends JFrame {
 		return client;
 	}
 
-//	public static void main(String[] args) {
-////		new IHMInscription();
-////		new IHMClient();
-//	}
+	public static void main(String[] args) {
+//		new IHMInscription();
+//		new IHMClient();
+	}
 	
 }
