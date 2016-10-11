@@ -2,36 +2,32 @@ package implementation.serveur;
 
 import interfaces.IAcheteur;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class ListeInscrits {
 
-	private Map<IAcheteur, String> inscrits;
+	private List<IAcheteur> inscrits;
 	//private List<Participant> inscrits;
 
 	public ListeInscrits() {
-		inscrits = new HashMap<>(); 
+		inscrits = new ArrayList<IAcheteur>(); 
 				//new Vector<Participant>();
 		
 	}
-	
-	public int taille() {
-		return inscrits.size();
+	public void inscrire(IAcheteur ach) {
+		this.inscrits.add(ach);
 	}
-	
-	public void add(IAcheteur ach, String pseudo) {
-		inscrits.put(ach, pseudo);
-	}
-	
-	public String getPseudo(IAcheteur ach) {
-		return inscrits.get(ach);
-	}
-	
-	/**
-	 * @return the inscrits
-	 */
-	public Map<IAcheteur, String> getInscrits() {
+
+	public List<IAcheteur> getInscrits() {
 		return inscrits;
 	}
+
+	public void setInscrits(List<IAcheteur> inscrits) {
+		this.inscrits = inscrits;
+	}
+
+	
+	
 }

@@ -15,6 +15,7 @@ import java.rmi.registry.Registry;
 
 import ihm.IHMInscription;
 import implementation.serveur.ObjetEnVente;
+import implementation.serveur.ServeurVente;
 import interfaces.IAcheteur;
 import interfaces.IServeurVente;
 
@@ -26,40 +27,37 @@ public class Client implements IAcheteur, Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private final static int portConnexion = 8811;
-	private final static String nomServeur = "//localhost:" + portConnexion + "/serveur";
+	private final static String PseudoServeur = "//localhost:" + portConnexion + "/serveur";
 	
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);//permet gestion des affichages consoles
 
-	private String nom;
-	private String id;
+	private String pseudo;
 	private int prixObjEnEnchere;
 	private ObjetEnVente obj;
-	private String nomMaxDonnateur;
+	private String PseudoMaxDonnateur;
 	private EtatClient state;
 	private IServeurVente serv;
 	
 	
 
-	public Client(String nom, String id, int prix, ObjetEnVente obj,
-			String nomMaxDonnateur) {
+	public Client(String Pseudo, String id, int prix, ObjetEnVente obj,
+			String PseudoMaxDonnateur) {
 		super();
-		this.nom = nom;
-		this.id = id;
+		this.pseudo = Pseudo;
 		this.prixObjEnEnchere = prix;
 		this.obj = obj;
-		this.nomMaxDonnateur = nomMaxDonnateur;
+		this.PseudoMaxDonnateur = PseudoMaxDonnateur;
 		this.setState(EtatClient.ATTENTE);
 		this.serv = null;
 		LOGGER.setLevel(Level.INFO);
 	}
 	
-	public Client(String nom) {
+	public Client() {
 		super();
-		this.nom = nom;
-		this.id = "1";
+		this.pseudo = null;
 		this.prixObjEnEnchere = 0;
 		this.obj = null;
-		this.nomMaxDonnateur = null;
+		this.PseudoMaxDonnateur = null;
 		this.setState(EtatClient.ATTENTE);
 		LOGGER.setLevel(Level.INFO);
 	}
@@ -68,7 +66,7 @@ public class Client implements IAcheteur, Serializable {
 		Scanner sc = new Scanner(System.in);
 		LOGGER.info("nouveau prix : ");
 		int newprix = sc.nextInt();
-		this.envoiRencherir(newprix, this.serv);
+		this.envoiRencherir(newprix);
 	}
 
 	@Override
@@ -85,7 +83,7 @@ public class Client implements IAcheteur, Serializable {
 	@Override
 	public void objetVendu() throws RemoteException {
 		this.setState(EtatClient.TERMINE);
-		LOGGER.info("objet vendu a " + nomMaxDonnateur);
+		LOGGER.info("objet vendu a " + PseudoMaxDonnateur);
 		
 	}
 
@@ -93,7 +91,7 @@ public class Client implements IAcheteur, Serializable {
 	public void nouveauPrix(int prix, String pseudo) throws RemoteException {
 		this.setState(EtatClient.ENCHERE);
 		this.prixObjEnEnchere = prix;
-		nomMaxDonnateur = pseudo;
+		PseudoMaxDonnateur = pseudo;
 		LOGGER.info("Nouveau prix : " + prix);
 		LOGGER.info("envoye par " + pseudo);
 		this.envoyerPrix();
@@ -117,25 +115,24 @@ public class Client implements IAcheteur, Serializable {
 			e.printStackTrace();
 		}
 		LOGGER.info("connexion etablie");
-		//passe en etat enchere
 		return serveurVente;
 		
 	}
 	
 //*******************Methodes qui entrainent des changements d'etat coté serveur******************//
-	public void envoiInscription(String pseudo) {
+	public void envoiInscription() {
 		try {
-			this.getServ().inscriptionAcheteur(pseudo, this);
+			serv.inscriptionAcheteur(this.pseudo, this);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
 		this.setState(EtatClient.ENCHERE);
 	}
 	
-	public void envoiRencherir(int prix, IServeurVente serveurVente) {
+	public void envoiRencherir(int prix) {
 		this.setState(EtatClient.ATTENTE);
 		try {
-			this.getServ().rencherir(prix, this);
+			serv.rencherir(prix, this);//marche pas car mauvaise insertion client
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -149,18 +146,20 @@ public class Client implements IAcheteur, Serializable {
 //		((Client)cli).setServ(bindingClient("//localhost:8810/serveur"));
 //		((Client)cli).envoiInscription(inscrit.getTexte());
 
-		IAcheteur cli = new Client("toto");
-		((Client)cli).setServ(bindingClient(nomServeur));
-		((Client)cli).envoiInscription("toto");
+		IAcheteur cli = new Client();
+		((Client)cli).setPseudo("toto");
+		((Client)cli).setServ(bindingClient(PseudoServeur));
+		((Client)cli).envoiInscription();
 	}
 
-	public String getNom() {
-		return nom;
+	public String getPseudo() {
+		return pseudo;
+	}
+	
+	public void setPseudo(String pseudo) {
+		this.pseudo = pseudo;
 	}
 
-	public String getId() {
-		return id;
-	}
 
 	public int getPrix() {
 		return prixObjEnEnchere;
@@ -170,8 +169,8 @@ public class Client implements IAcheteur, Serializable {
 		return obj;
 	}
 
-	public String getNomMaxDonnateur() {
-		return nomMaxDonnateur;
+	public String getPseudoMaxDonnateur() {
+		return PseudoMaxDonnateur;
 	}
 
 	public EtatClient getState() {

@@ -17,6 +17,7 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 
 	private final static int portConnexion = 8811;
 	private final static String nomServeur = "//localhost:" + portConnexion + "/serveur";
+	private static final int MIN_CLIENTS_Debut = 1;
 	
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);//permet gestion des affichages consoles
 
@@ -87,13 +88,17 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 				wait();
 			}
 			LOGGER.info("traitement...");
-			participants.add(acheteur, pseudo);
-			notifyAll();//pour declencher une chaine d'inscription
+			participants.inscrire(acheteur);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		LOGGER.info("fin inscription");
+		LOGGER.info("fin inscription : " + participants.getInscrits().size() );
+		if(participants.getInscrits().size() >= MIN_CLIENTS_Debut) {
+			DebutVente();
+		} else {
+			System.out.println("pas encore");
+		}
 	}
 	
 /******************************Fin des methodes pour gerer l'inscription des Clients******************************/
@@ -120,16 +125,16 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 	 * methode qui previens les clients que l'enchere est finie
 	 */
 	public void finEnchere() {
-		for (Map.Entry<IAcheteur, String> entry : participants.getInscrits().entrySet()) {//iteration sur chaque inscrits
+		for (IAcheteur entry : participants.getInscrits()) {//iteration sur chaque inscrits
 			try {
-				entry.getKey().objetVendu();
+				entry.objetVendu();
 			} catch (RemoteException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
 		venteEnCours = false;
-//		notifyAll();
+		notifyAll();
 	}
 	
 	/**@author lenny
@@ -137,9 +142,9 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 	 * @param gagnante
 	 */
 	public void FinRoundEnchere(Enchere gagnante) {
-		for (Map.Entry<IAcheteur, String> entry : participants.getInscrits().entrySet()) {//iteration sur chaque inscrits
+		for (IAcheteur entry : participants.getInscrits()) {//iteration sur chaque inscrits
 			try {
-				entry.getKey().nouveauPrix(gagnante.getEnchere(), participants.getPseudo(gagnante.getEnchereur()));
+				entry.nouveauPrix(gagnante.getEnchere(), ((Client)gagnante.getEnchereur()).getPseudo());
 			} catch (RemoteException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -170,7 +175,7 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 	public synchronized void rencherir(int prix, IAcheteur acheteur) throws RemoteException {
 		Enchere ench = new Enchere(acheteur, prix);
 		encheres.add(ench);
-		if (encheres.taille() >= participants.taille()) {
+		if (encheres.taille() >= participants.getInscrits().size()) {
 			realiserRoundEnchere();
 		}
 	}
@@ -195,37 +200,14 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 	public void DebutVente() throws RemoteException {
 		venteEnCours = true;
 		encheres.getListeEnchere().clear();//pour eviter les encheres fantomes
-		objVente = listeObjsVentes.getnextObjet();
+		//objVente = listeObjsVentes.getnextObjet();
 		prixActuel = objVente.getPrix();
 		if(objVente != null) {
-			for (IAcheteur ach: participants.getInscrits().keySet()) {
+			for (IAcheteur ach: participants.getInscrits()) {
 				ach.nouvelleSoumission(objVente, prixActuel);
 			}
 		}
 		
-	}
-	
-	/**@author lenny
-	 * attend qu'un nombre x de clients soit pret pour lancer l'enchere
-	 * @param x
-	 */
-	public synchronized void attenteDeDebutEnchere(int x) {
-		while(participants.taille() < x) {
-			try {
-				wait();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		for(IAcheteur ach : participants.getInscrits().keySet()) {
-			try {
-				ach.nouvelleSoumission(objVente, prixActuel);
-			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
 	}
 	
 	/**@author lenny
@@ -256,7 +238,6 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 		
 		IServeurVente serveur = new ServeurVente();
 		bindingServeur(nomServeur, serveur);
-		((ServeurVente)serveur).attenteDeDebutEnchere(3);
 		
 		
 	}
@@ -292,4 +273,5 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 	public void setPrix(int prix) {
 		this.prixActuel = prix;
 	}
+
 }

@@ -28,5 +28,4 @@ public interface IServeurVente extends Remote {
 	 * @throws RemoteException
 	 */
 	public void tempsEcoule(IAcheteur acheteur) throws RemoteException;
-	
 }

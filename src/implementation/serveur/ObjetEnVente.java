@@ -1,6 +1,8 @@
 package implementation.serveur;
 
-public class ObjetEnVente {
+import java.io.Serializable;
+
+public class ObjetEnVente implements Serializable {
 	
 	private String nom;
 	private String description;

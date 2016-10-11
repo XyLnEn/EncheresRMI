@@ -46,7 +46,8 @@ public class IHMInscription extends JFrame implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String texte = (labelPseudo.getText());
-		client = new Client(texte);
+		client = new Client();
+		client.setPseudo(texte);
 //		client.setServ(client.bindingClient("//localhost:8810/serveur"));
 //		client.envoiInscription(texte);
 		new IHMClient();
