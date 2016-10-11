@@ -14,6 +14,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
 import ihm.IHMClient;
+import ihm.IHMInscription;
 import implementation.serveur.ObjetEnVente;
 import interfaces.IAcheteur;
 import interfaces.IServeurVente;
@@ -89,8 +90,8 @@ public class Client implements IAcheteur, Serializable {
 	
 
 	public static void main(String[] args) {
-//		IHMClient guiclient = new IHMClient();
-		IAcheteur cli = new Client("bob","1",-1,null,null);
+		IHMInscription inscrit = new IHMInscription();
+		IAcheteur cli = new Client(inscrit.getTexte(),"1",-1,null,null);
 		IServeurVente serveurVente = bindingClient("//localhost:8810/serveur",cli);
 		try {
 			serveurVente.inscriptionAcheteur("toto", cli);

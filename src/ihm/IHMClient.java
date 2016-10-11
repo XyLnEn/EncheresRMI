@@ -1,5 +1,7 @@
 package ihm;
 
+import interfaces.IAcheteur;
+
 import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -23,12 +25,14 @@ public class IHMClient extends JFrame {
 	
 	private static final long serialVersionUID = 1L;
 
+	private IAcheteur client = null;
+	
 	private JPanel panelPrincipal;
 	private JPanel panelImage;
 	private JPanel panelEnchere;
 	private JPanel panelObjet;
 	
-	private JLabel labelNom;
+//	private JLabel labelNom;
 	private JTextArea labelDescr;
     private JLabel labelPrixObject;
     private JLabel labelInfoVendu;
@@ -59,7 +63,7 @@ public class IHMClient extends JFrame {
 		panelPrincipal = new JPanel();
 		panelPrincipal.setLayout(new GridLayout(1, 2, 5, 5));
 		
-		labelNom = new JLabel("Une grosse patoune");
+//		labelNom = new JLabel("Une grosse patoune");
 		labelDescr = new JTextArea("Description de l'objet : " + "blablablasssssssssssssssssssssssssssssssssssssssssss");
 		labelDescr.setLineWrap(true);
 		labelDescr.setWrapStyleWord(true);
@@ -104,9 +108,13 @@ public class IHMClient extends JFrame {
 	    this.setContentPane(panelPrincipal);
 	}
 	
-	public static void main(String[] args) {
-		new IHMInscription();
-		//new IHMClient();
+	public IAcheteur getClient() {
+		return client;
 	}
+
+//	public static void main(String[] args) {
+////		new IHMInscription();
+////		new IHMClient();
+//	}
 	
 }
