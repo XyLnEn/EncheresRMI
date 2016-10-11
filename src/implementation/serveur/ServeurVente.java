@@ -42,7 +42,7 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 	 * @return la descr
 	 */
 	public String NouvDescrObjet(Scanner sc) {
-		LOGGER.warning("descr de l'objet : ");
+		LOGGER.info("descr de l'objet : ");
 		String descr = sc.nextLine();
 		System.out.println("");
 		return descr;
@@ -54,7 +54,7 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 	 * @return le nom
 	 */
 	public String NouvNomObjet(Scanner sc) {
-		LOGGER.warning("nom de l'objet : ");
+		LOGGER.info("nom de l'objet : ");
 		String nom = sc.nextLine();
 		System.out.println("");
 		return nom;
@@ -66,7 +66,7 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 	 * @return le prix
 	 */
 	public int NouvPrix(Scanner sc) {
-		LOGGER.warning("prix de l'objet : ");
+		LOGGER.info("prix de l'objet : ");
 		int prix = sc.nextInt();
 		System.out.println("");
 		return prix;
@@ -90,7 +90,7 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 	 */
 	@Override
 	public synchronized void inscriptionAcheteur(String pseudo, IAcheteur acheteur) throws RemoteException {
-		LOGGER.warning("Demande d'inscription de " + pseudo + " bien reçue");
+		LOGGER.info("Demande d'inscription de " + pseudo + " bien reçue");
 		try {
 			while(venteEnCours) {
 				wait();
@@ -102,7 +102,7 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		LOGGER.warning("fin inscription");
+		LOGGER.info("fin inscription");
 	}
 	
 	/** @author lenny
@@ -205,7 +205,7 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        System.err.println("Server ready");
+		LOGGER.info("Server ready");
 	}
 	
 	/**@author lenny

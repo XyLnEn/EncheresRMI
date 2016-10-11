@@ -1,11 +1,16 @@
 package ihm;
 
+import implementation.client.Client;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-public class IHMInscription extends JFrame {
+public class IHMInscription extends JFrame implements ActionListener{
 
 	private static final long serialVersionUID = 1L;
 
@@ -13,6 +18,7 @@ public class IHMInscription extends JFrame {
 	private JPanel panelPrincipal;
 	private JTextField labelPseudo;
 	private JButton btnPseudo;
+	private String texte;
 	
 	public IHMInscription() {
 		demandePseudo();
@@ -28,10 +34,26 @@ public class IHMInscription extends JFrame {
 		
 		labelPseudo = new JTextField("Saisir votre pseudo", 20);
 		btnPseudo = new JButton("Confirmer");
+		btnPseudo.addActionListener(this);
 		
 		panelPrincipal.add(labelPseudo);
 		panelPrincipal.add(btnPseudo);
 		
 		this.setContentPane(panelPrincipal);
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		setTexte(labelPseudo.getText());
+		new IHMClient();
+	}
+	
+
+	public String getTexte() {
+		return texte;
+	}
+
+	public void setTexte(String texte) {
+		this.texte = texte;
 	}
 }
