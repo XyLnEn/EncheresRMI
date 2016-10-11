@@ -74,7 +74,7 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 			}
 			LOGGER.info("traitement...");
 			participants.add(acheteur, pseudo);
-			notify();//pour declencher une chaine d'inscription
+			notifyAll();//pour declencher une chaine d'inscription
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -141,7 +141,7 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 
 	@Override
 	public void tempsEcoule(IAcheteur acheteur) throws RemoteException {
-		// TODO Auto-generated method stub
+		rencherir(0, acheteur);
 
 	}
 	
