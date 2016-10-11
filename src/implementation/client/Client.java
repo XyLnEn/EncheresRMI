@@ -28,6 +28,7 @@ public class Client implements IAcheteur, Serializable {
 	private int prixObjEnEnchere;
 	private ObjetEnVente obj;
 	private String nomMaxDonnateur;
+	private EtatClient state;
 	
 	
 
@@ -44,22 +45,25 @@ public class Client implements IAcheteur, Serializable {
 
 	@Override
 	public void nouvelleSoumission(ObjetEnVente Objet, int prix) throws RemoteException {
+		//State passe a enchere
 		obj = Objet;
 		this.prixObjEnEnchere = prix;
 		LOGGER.info("objet:" + obj.getNom());
 		LOGGER.info("descr:" + obj.getDescription());
 		LOGGER.info("prix:" + this.getPrix());
-
+		
 	}
 
 	@Override
 	public void objetVendu() throws RemoteException {
-		LOGGER.info("objet vendu");
+		//on passe en etat termine
+		LOGGER.info("objet vendu a " + nomMaxDonnateur);
 		
 	}
 
 	@Override
 	public void nouveauPrix(int prix, String pseudo) throws RemoteException {
+		//on repasse en etat enchere
 		this.prixObjEnEnchere = prix;
 		nomMaxDonnateur = pseudo;
 		LOGGER.info("Nouveau prix : " + prix);
@@ -84,6 +88,7 @@ public class Client implements IAcheteur, Serializable {
 			e.printStackTrace();
 		}
 		LOGGER.info("connexion etablie");
+		//passe en etat enchere
 		return serveurVente;
 		
 	}
@@ -93,6 +98,7 @@ public class Client implements IAcheteur, Serializable {
 		IHMInscription inscrit = new IHMInscription();
 		IAcheteur cli = new Client(inscrit.getTexte(),"1",-1,null,null);
 		IServeurVente serveurVente = bindingClient("//localhost:8810/serveur",cli);
+		
 		try {
 			serveurVente.inscriptionAcheteur("toto", cli);
 		} catch (RemoteException e) {

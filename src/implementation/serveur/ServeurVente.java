@@ -35,6 +35,11 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 		LOGGER.setLevel(Level.INFO);
 	}
 	
+	/** @author lenny
+	 * methode qui recupere la descr d'un objet 
+	 * @param sc un scanner
+	 * @return la descr
+	 */
 	public String NouvDescrObjet(Scanner sc) {
 		LOGGER.info("descr de l'objet : ");
 		String descr = sc.nextLine();
@@ -42,6 +47,11 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 		return descr;
 	}
 	
+	/** @author lenny
+	 * methode qui recupere le nom d'un objet 
+	 * @param sc le scanner
+	 * @return le nom
+	 */
 	public String NouvNomObjet(Scanner sc) {
 		LOGGER.info("nom de l'objet : ");
 		String nom = sc.nextLine();
@@ -49,6 +59,11 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 		return nom;
 	}
 	
+	/** @author lenny
+	 * methode qui recupere le prix d'un objet
+	 * @param sc le scanner
+	 * @return le prix
+	 */
 	public int NouvPrix(Scanner sc) {
 		LOGGER.info("prix de l'objet : ");
 		int prix = sc.nextInt();
@@ -56,6 +71,10 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 		return prix;
 	}
 	
+	/**@author lenny
+	 * methode qui annonce le nouvel objet a vendre
+	 * @throws RemoteException
+	 */
 	public void DebutVente() throws RemoteException {
 		venteEnCours = true;
 		encheres.getListeEnchere().clear();//pour eviter les encheres fantomes
@@ -65,6 +84,9 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 		
 	}
 
+	/*(non-Javadoc)
+	 * @see interfaces.IServeurVente#inscriptionAcheteur(java.lang.String, interfaces.IAcheteur)
+	 */
 	@Override
 	public synchronized void inscriptionAcheteur(String pseudo, IAcheteur acheteur) throws RemoteException {
 		LOGGER.info("Demande d'inscription de " + pseudo + " bien reçue");
@@ -82,6 +104,10 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 		LOGGER.info("fin inscription");
 	}
 	
+	/** @author lenny
+	 * methode qui determine quelle enchere est la gagnante
+	 * @return gagnante l'enchere la plus eleve 
+	 */
 	public Enchere getBestEnchere() {
 		Enchere gagnante = new Enchere(null, 0);
 		for (Enchere current : encheres.getListeEnchere()) {
@@ -94,6 +120,9 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 		return gagnante;
 	}
 	
+	/**@author lenny
+	 * methode qui previens les clients que l'enchere est finie
+	 */
 	public void finEnchere() {
 		for (Map.Entry<IAcheteur, String> entry : participants.getInscrits().entrySet()) {//iteration sur chaque inscrits
 			try {
@@ -107,6 +136,10 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 //		notifyAll();
 	}
 	
+	/**@author lenny
+	 * methode qui previens les clients que le round est terminé. On envoie le nom du gagnant actuel avec la somme proposée
+	 * @param gagnante
+	 */
 	public void FinRoundEnchere(Enchere gagnante) {
 		for (Map.Entry<IAcheteur, String> entry : participants.getInscrits().entrySet()) {//iteration sur chaque inscrits
 			try {
@@ -118,6 +151,10 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 		}
 	}
 	
+	/**@author lenny
+	 * methode qui recupere la meilleure enchere et decide si la vente est finie ou si il faut effectuer un nouveau tour.
+	 * 
+	 */
 	public void realiserRoundEnchere() {
 		Enchere gagnante = getBestEnchere();
 		boolean enchereFinie = (gagnante.getEnchere() == 0);//pour detecter si personne n'a fait d'encheres
@@ -130,6 +167,9 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 	}
 
 	//possibilite d'un round ou encheres != 0 mais toutes en dessous du prix serv? possibilit� d'enchere ou prix <= prix courant client?
+	/* (non-Javadoc)
+	 * @see interfaces.IServeurVente#rencherir(int, interfaces.IAcheteur)
+	 */
 	@Override
 	public synchronized void rencherir(int prix, IAcheteur acheteur) throws RemoteException {
 		Enchere ench = new Enchere(acheteur, prix);
@@ -139,12 +179,20 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see interfaces.IServeurVente#tempsEcoule(interfaces.IAcheteur)
+	 */
 	@Override
 	public void tempsEcoule(IAcheteur acheteur) throws RemoteException {
 		rencherir(0, acheteur);
 
 	}
 	
+	/**@author lenny
+	 * prepare le serveur pour la connexion des clients
+	 * @param adresse
+	 * @param serveur
+	 */
 	public static void bindingServeur(String adresse, IServeurVente serveur) {
 		try {
 			Registry registry = LocateRegistry.createRegistry(8810);
@@ -159,6 +207,10 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 		LOGGER.info("Server ready");
 	}
 	
+	/**@author lenny
+	 * attend qu'un nombre x de clients soit pret pour lancer l'enchere
+	 * @param x
+	 */
 	public void attenteDeDebutEnchere(int x) {
 		while(participants.taille() < x) {
 			try {
