@@ -20,6 +20,7 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);//permet gestion des affichages consoles
 
 	private ListeInscrits participants;
+	private ListeObjetEnVente listeObjsVentes;
 	private ObjetEnVente objVente;
 	private int prix;
 	private ListeEncheres encheres;
@@ -27,50 +28,46 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 	
 	
 	protected ServeurVente() throws RemoteException {
-		Scanner sc = new Scanner(System.in);
-		participants = new ListeInscrits();
-		String nom = this.NouvNomObjet(sc);
-		String descr = this.NouvDescrObjet(sc);
-		setObjVente(new ObjetEnVente(nom,descr));
-		prix = this.NouvPrix(sc);
+		listeObjsVentes = new ListeObjetEnVente();
+		objVente = listeObjsVentes.getObjetsVentes().get(0);
 		LOGGER.setLevel(Level.INFO);
 	}
 	
-	/** @author lenny
-	 * methode qui recupere la descr d'un objet 
-	 * @param sc un scanner
-	 * @return la descr
-	 */
-	public String NouvDescrObjet(Scanner sc) {
-		LOGGER.info("descr de l'objet : ");
-		String descr = sc.nextLine();
-		System.out.println("");
-		return descr;
-	}
-	
-	/** @author lenny
-	 * methode qui recupere le nom d'un objet 
-	 * @param sc le scanner
-	 * @return le nom
-	 */
-	public String NouvNomObjet(Scanner sc) {
-		LOGGER.info("nom de l'objet : ");
-		String nom = sc.nextLine();
-		System.out.println("");
-		return nom;
-	}
-	
-	/** @author lenny
-	 * methode qui recupere le prix d'un objet
-	 * @param sc le scanner
-	 * @return le prix
-	 */
-	public int NouvPrix(Scanner sc) {
-		LOGGER.info("prix de l'objet : ");
-		int prix = sc.nextInt();
-		System.out.println("");
-		return prix;
-	}
+//	/** @author lenny
+//	 * methode qui recupere la descr d'un objet 
+//	 * @param sc un scanner
+//	 * @return la descr
+//	 */
+//	public String NouvDescrObjet(Scanner sc) {
+//		LOGGER.info("descr de l'objet : ");
+//		String descr = sc.nextLine();
+//		System.out.println("");
+//		return descr;
+//	}
+//	
+//	/** @author lenny
+//	 * methode qui recupere le nom d'un objet 
+//	 * @param sc le scanner
+//	 * @return le nom
+//	 */
+//	public String NouvNomObjet(Scanner sc) {
+//		LOGGER.info("nom de l'objet : ");
+//		String nom = sc.nextLine();
+//		System.out.println("");
+//		return nom;
+//	}
+//	
+//	/** @author lenny
+//	 * methode qui recupere le prix d'un objet
+//	 * @param sc le scanner
+//	 * @return le prix
+//	 */
+//	public int NouvPrix(Scanner sc) {
+//		LOGGER.info("prix de l'objet : ");
+//		int prix = sc.nextInt();
+//		System.out.println("");
+//		return prix;
+//	}
 	
 	/**@author lenny
 	 * methode qui annonce le nouvel objet a vendre
@@ -236,6 +233,7 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 		IServeurVente serveur = new ServeurVente();
 		bindingServeur("//localhost:8810/serveur", serveur);
 		((ServeurVente)serveur).attenteDeDebutEnchere(3);
+		
 		
 	}
 	
