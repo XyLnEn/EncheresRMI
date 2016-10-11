@@ -10,6 +10,7 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import implementation.client.Client;
 import interfaces.IAcheteur;
 import interfaces.IServeurVente;
 
@@ -211,7 +212,7 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 	 * attend qu'un nombre x de clients soit pret pour lancer l'enchere
 	 * @param x
 	 */
-	public void attenteDeDebutEnchere(int x) {
+	public synchronized void attenteDeDebutEnchere(int x) {
 		while(participants.taille() < x) {
 			try {
 				wait();
