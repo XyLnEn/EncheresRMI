@@ -7,13 +7,11 @@ import java.util.logging.Logger;
 
 import java.io.Serializable;
 import java.rmi.AccessException;
-import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
-import ihm.IHMClient;
 import ihm.IHMInscription;
 import implementation.serveur.ObjetEnVente;
 import interfaces.IAcheteur;
@@ -21,6 +19,11 @@ import interfaces.IServeurVente;
 
 public class Client implements IAcheteur, Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);//permet gestion des affichages consoles
 
 	private String nom;
@@ -121,6 +124,7 @@ public class Client implements IAcheteur, Serializable {
 	public static void main(String[] args) {
 //		IHMClient guiclient = new IHMClient();
 		IHMInscription inscrit = new IHMInscription();
+		// Alicia ? qui a quoi
 		IAcheteur cli = new Client(inscrit.getTexte());
 		IServeurVente serveurVente = bindingClient("//localhost:8810/serveur",cli);
 		((Client)cli).envoiInscription(inscrit.getTexte(), cli, serveurVente);
