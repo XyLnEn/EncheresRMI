@@ -29,6 +29,7 @@ public class Client implements IAcheteur, Serializable {
 	private ObjetEnVente obj;
 	private String nomMaxDonnateur;
 	private EtatClient state;
+	private IServeurVente serv;
 	
 	
 
@@ -40,7 +41,8 @@ public class Client implements IAcheteur, Serializable {
 		this.prixObjEnEnchere = prix;
 		this.obj = obj;
 		this.nomMaxDonnateur = nomMaxDonnateur;
-		this.setState(new EtatAttente());
+		this.setState(EtatClient.ATTENTE);
+		this.serv = null;
 		LOGGER.setLevel(Level.INFO);
 	}
 	
@@ -51,32 +53,32 @@ public class Client implements IAcheteur, Serializable {
 		this.prixObjEnEnchere = 0;
 		this.obj = null;
 		this.nomMaxDonnateur = null;
-		this.setState(new EtatAttente());
+		this.setState(EtatClient.ATTENTE);
 		LOGGER.setLevel(Level.INFO);
 	}
 
 
 	@Override
 	public void nouvelleSoumission(ObjetEnVente Objet, int prix) throws RemoteException {
-		this.setState(new EtatEnchere());
+		this.setState(EtatClient.ENCHERE);
 		obj = Objet;
 		this.prixObjEnEnchere = prix;
 		LOGGER.info("objet:" + obj.getNom());
 		LOGGER.info("descr:" + obj.getDescription());
 		LOGGER.info("prix:" + this.getPrix());
-		
+		this.envoiRencherir(prix, this.serv);
 	}
 
 	@Override
 	public void objetVendu() throws RemoteException {
-		this.setState(new EtatFini());
+		this.setState(EtatClient.TERMINE);
 		LOGGER.info("objet vendu a " + nomMaxDonnateur);
 		
 	}
 
 	@Override
 	public void nouveauPrix(int prix, String pseudo) throws RemoteException {
-		this.setState(new EtatEnchere());
+		this.setState(EtatClient.ENCHERE);
 		this.prixObjEnEnchere = prix;
 		nomMaxDonnateur = pseudo;
 		LOGGER.info("Nouveau prix : " + prix);
@@ -85,7 +87,7 @@ public class Client implements IAcheteur, Serializable {
 	}
 	
 	
-	public static IServeurVente bindingClient(String adresse, IAcheteur cli) {
+	public static IServeurVente bindingClient(String adresse) {
 		IServeurVente serveurVente = null;
 		try {
 			Registry registry = LocateRegistry.getRegistry(8810);
@@ -108,13 +110,23 @@ public class Client implements IAcheteur, Serializable {
 	}
 	
 //*******************Methodes qui entrainent des changements d'etat coté serveur******************//
-	public void envoiInscription(String pseudo, IAcheteur acheteur, IServeurVente serveurVente) {
+	public void envoiInscription(String pseudo) {
 		try {
-			serveurVente.inscriptionAcheteur(pseudo, acheteur);
+			this.getServ().inscriptionAcheteur(pseudo, this);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
-		this.setState(new EtatEnchere());
+		this.setState(EtatClient.ENCHERE);
+	}
+	
+	public void envoiRencherir(int prix, IServeurVente serveurVente) {
+		this.setState(EtatClient.ATTENTE);
+		try {
+			this.getServ().rencherir(prix, this);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 
@@ -122,8 +134,8 @@ public class Client implements IAcheteur, Serializable {
 //		IHMClient guiclient = new IHMClient();
 		IHMInscription inscrit = new IHMInscription();
 		IAcheteur cli = new Client(inscrit.getTexte());
-		IServeurVente serveurVente = bindingClient("//localhost:8810/serveur",cli);
-		((Client)cli).envoiInscription(inscrit.getTexte(), cli, serveurVente);
+		((Client)cli).setServ(bindingClient("//localhost:8810/serveur"));
+		((Client)cli).envoiInscription(inscrit.getTexte());
 	}
 
 	public String getNom() {
@@ -153,4 +165,14 @@ public class Client implements IAcheteur, Serializable {
 	public void setState(EtatClient state) {
 		this.state = state;
 	}
+
+	public IServeurVente getServ() {
+		return serv;
+	}
+
+	public void setServ(IServeurVente serv) {
+		this.serv = serv;
+	}
+	
+	
 }
