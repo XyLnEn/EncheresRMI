@@ -2,16 +2,17 @@ package implementation.serveur;
 
 import interfaces.IAcheteur;
 
-import java.util.HashMap;
+import java.io.Serializable;
+import java.util.Hashtable;
 import java.util.Map;
 
-public class ListeInscrits {
+public class ListeInscrits  implements Serializable {
 
 	private Map<IAcheteur, String> inscrits;
 	//private List<Participant> inscrits;
 
 	public ListeInscrits() {
-		inscrits = new HashMap<>(); 
+		inscrits = new Hashtable<>(); 
 				//new Vector<Participant>();
 		
 	}

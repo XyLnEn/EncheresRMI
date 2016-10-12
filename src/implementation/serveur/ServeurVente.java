@@ -1,5 +1,6 @@
 package implementation.serveur;
 
+import java.io.Serializable;
 import java.rmi.AccessException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -13,7 +14,7 @@ import implementation.client.Client;
 import interfaces.IAcheteur;
 import interfaces.IServeurVente;
 
-public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
+public class ServeurVente extends UnicastRemoteObject implements IServeurVente, Serializable {
 
 	private final static int portConnexion = 8811;
 	private final static String nomServeur = "//localhost:" + portConnexion + "/serveur";
@@ -53,6 +54,7 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 			}
 			LOGGER.info("traitement...");
 			participants.add(acheteur, pseudo);
+			System.out.println(participants.taille());
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -118,6 +120,7 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 	public void realiserRoundEnchere() {
 		Enchere gagnante = getBestEnchere();
 		boolean enchereFinie = (gagnante.getEnchere() == 0);//pour detecter si personne n'a fait d'encheres
+		encheres.getListeEnchere().clear();//reset des encheres dans tout les cas
 		if(enchereFinie) {
 			finEnchere();
 		}
@@ -126,7 +129,6 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 		}
 	}
 
-	//possibilite d'un round ou encheres != 0 mais toutes en dessous du prix serv? possibilit� d'enchere ou prix <= prix courant client?
 	/* (non-Javadoc)
 	 * @see interfaces.IServeurVente#rencherir(int, interfaces.IAcheteur)
 	 */
@@ -135,7 +137,8 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 		Enchere ench = new Enchere(acheteur, prix);
 		encheres.add(ench);
 		if (encheres.taille() >= participants.taille()) {
-			realiserRoundEnchere();
+			// TODO regler le prob d'interblocage 
+			realiserRoundEnchere();//Probleme interblocage ici : il fini par appeler le client qui appelle a nouveau rencherir, ce qui bloque.
 		}
 	}
 
@@ -152,7 +155,7 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente {
 
 /******************************Debut des methodes pour la gestion du Serveur******************************/
 	
-	public synchronized void ajouterEnchere(ObjetEnVente obj) {
+	public void ajouterEnchere(ObjetEnVente obj) {//devrait etre synchronized
 		listeObjsVentes.ajouterObjet(obj);
 		if(participants.taille() >= NB_MIN_ACHETEURS) {
 			try {

@@ -1,8 +1,10 @@
 package implementation.serveur;
 
+import java.io.Serializable;
+
 import interfaces.IAcheteur;
 
-public class Enchere {
+public class Enchere  implements Serializable {
 
 	private IAcheteur enchereur;
 	private int enchere;

@@ -1,11 +1,12 @@
 package interfaces;
 
+import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 import implementation.serveur.ObjetEnVente;
 
-public interface IServeurVente extends Remote {
+public interface IServeurVente extends Remote{
 
 	/*** @author lenny
 	 * inscrit un acheteur au serveur. L'acheteur est en attente tant qu'une enchere est en cours

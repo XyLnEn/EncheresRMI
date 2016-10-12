@@ -1,8 +1,10 @@
 package implementation.serveur;
 
+import java.io.Serializable;
+
 import interfaces.IAcheteur;
 
-public class Participant {
+public class Participant  implements Serializable {
 	private String pseudo;
 	private IAcheteur acheteur;
 	

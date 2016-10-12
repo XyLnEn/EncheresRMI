@@ -2,11 +2,12 @@ package implementation.serveur;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class ListeObjetEnVente {
+public class ListeObjetEnVente implements Serializable {
 
 	private List<ObjetEnVente> objetsVentes;
 	private int ObjetActuel = 0;
