@@ -4,26 +4,32 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class ListeObjetEnVente {
 
-	private List<ObjetEnVente> objetsVentes = new ArrayList<ObjetEnVente>();
+	private List<ObjetEnVente> objetsVentes;
 	private int ObjetActuel = 0;
 	
 
 	public ListeObjetEnVente() {
+//		try{
+//			BufferedReader br = new BufferedReader(new FileReader("ressources/listeObjet.txt"));
+//			String ligne;
+//			while ((ligne = br.readLine()) != null){
+//				objetsVentes.add(new ObjetEnVente(ligne.split(", ")[0], ligne.split(", ")[1], Integer.parseInt(ligne.split(", ")[2]), ligne.split(", ")[3]));
+//			}
+//			br.close(); 
+//		}		
+//		catch (Exception e){
+//			e.printStackTrace();
+//		}
 		
-		try{
-			BufferedReader br = new BufferedReader(new FileReader("ressources/listeObjet.txt"));
-			String ligne;
-			while ((ligne = br.readLine()) != null){
-				objetsVentes.add(new ObjetEnVente(ligne.split(", ")[0], ligne.split(", ")[1], Integer.parseInt(ligne.split(", ")[2]), ligne.split(", ")[3]));
-			}
-			br.close(); 
-		}		
-		catch (Exception e){
-			e.printStackTrace();
-		}
+		objetsVentes = new ArrayList<ObjetEnVente>();
+	}
+	
+	public void ajouterObjet(ObjetEnVente obj) {
+		objetsVentes.add(obj);
 	}
 	
 	public void afficherListe() {
@@ -36,8 +42,8 @@ public class ListeObjetEnVente {
 	}
 	
 	public ObjetEnVente getObjet() {
-		if(ObjetActuel < objetsVentes.size() ){
-			return objetsVentes.get(ObjetActuel);
+		if(ObjetActuel - 1 < objetsVentes.size() ){
+			return objetsVentes.get(ObjetActuel - 1);
 		}else {
 			return null;
 		}

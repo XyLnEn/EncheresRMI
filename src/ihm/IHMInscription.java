@@ -5,6 +5,7 @@ import interfaces.IAcheteur;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.rmi.RemoteException;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -46,7 +47,12 @@ public class IHMInscription extends JFrame implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String texte = (labelPseudo.getText());
-		client = new Client(texte);
+		try {
+			client = new Client(texte);
+		} catch (RemoteException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 //		client.setServ(client.bindingClient("//localhost:8810/serveur"));
 //		client.envoiInscription(texte);
 		new IHMClient();

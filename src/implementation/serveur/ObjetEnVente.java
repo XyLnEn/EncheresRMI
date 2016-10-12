@@ -1,6 +1,9 @@
 package implementation.serveur;
 
-public class ObjetEnVente {
+import java.io.Serializable;
+import java.util.Scanner;
+
+public class ObjetEnVente implements Serializable {
 	
 	private String nom;
 	private String description;
@@ -12,6 +15,27 @@ public class ObjetEnVente {
 		description = descr;
 		prix = p;
 		image = img;
+	}
+	
+	public void creaObj() {
+		
+		Scanner sc = new Scanner(System.in);
+		System.out.print("nom : ");
+		nom = sc.nextLine();
+
+		System.out.println("");
+		System.out.print("description : ");
+		description = sc.nextLine();
+
+		System.out.println("");
+		System.out.print("prix : ");
+		prix = sc.nextInt();
+		sc.nextLine(); 
+		System.out.println("");
+		System.out.print("image : ");
+		image = sc.nextLine();
+		System.out.println("");
+		System.out.println("OK, ajout de l'objet");
 	}
 	
 	public int getPrix() {

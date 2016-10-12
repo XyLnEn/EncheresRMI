@@ -3,6 +3,8 @@ package interfaces;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
+import implementation.serveur.ObjetEnVente;
+
 public interface IServeurVente extends Remote {
 
 	/*** @author lenny
@@ -29,4 +31,5 @@ public interface IServeurVente extends Remote {
 	 */
 	public void tempsEcoule(IAcheteur acheteur) throws RemoteException;
 	
+	public void ajouterEnchere(ObjetEnVente obj) throws RemoteException;
 }
