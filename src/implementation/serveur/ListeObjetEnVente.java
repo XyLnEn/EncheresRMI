@@ -10,7 +10,6 @@ import java.util.Scanner;
 public class ListeObjetEnVente implements Serializable {
 
 	private List<ObjetEnVente> objetsVentes;
-	private int ObjetActuel = 0;
 	
 
 	public ListeObjetEnVente() {
@@ -42,17 +41,12 @@ public class ListeObjetEnVente implements Serializable {
 		}
 	}
 	
-	public ObjetEnVente getObjet() {
-		if(ObjetActuel - 1 < objetsVentes.size() ){
-			return objetsVentes.get(ObjetActuel - 1);
-		}else {
-			return null;
-		}
+	public ObjetEnVente getVenteActuelle() {
+		return objetsVentes.get(0);
 	}
 	
-	public ObjetEnVente getnextObjet() {
-		ObjetActuel++;
-		return getObjet();
+	public void FinirVente() {
+		objetsVentes.remove(0);
 	}
 	
 	public List<ObjetEnVente> getObjetsVentes() {

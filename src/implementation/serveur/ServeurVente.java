@@ -47,7 +47,7 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente, 
 	 * @see interfaces.IServeurVente#inscriptionAcheteur(java.lang.String, interfaces.IAcheteur)
 	 */
 	@Override
-	public void inscriptionAcheteur(String pseudo, IAcheteur acheteur) throws RemoteException {
+	public void inscriptionAcheteur(String pseudo, IAcheteur acheteur) throws RemoteException { //L'inscription marchera 
 		LOGGER.info("Demande d'inscription de " + pseudo + " bien reçue");
 		try {
 			while(venteEnCours) {
@@ -82,10 +82,16 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente, 
 		return gagnante;
 	}
 	
+	public synchronized void signalFinRound() {
+		venteEnCours = false;
+		notifyAll();
+	}
+	
 	/**@author Lenny Lucas
 	 * methode qui previens les clients que l'enchere est finie
 	 */
 	public void finEnchere() {
+		listeObjsVentes.FinirVente();
 		for (Map.Entry<IAcheteur, String> entry : participants.getInscrits().entrySet()) {//iteration sur chaque inscrits
 			try {
 				entry.getKey().objetVendu();
@@ -94,8 +100,17 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente, 
 				e1.printStackTrace();
 			}
 		}
-		venteEnCours = false;
-		notifyAll();
+		signalFinRound();
+		if((listeObjsVentes.getObjetsVentes().size() > 0) && (participants.taille() >= NB_MIN_ACHETEURS)) {
+			try {
+				DebutVente();
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else {
+			LOGGER.info("attente plus de personnes ou nouvel objet");
+		}
 	}
 	
 	/**@author Lenny Lucas
@@ -105,7 +120,6 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente, 
 	public void FinRoundEnchere(Enchere gagnante) {
 		for (Map.Entry<IAcheteur, String> entry : participants.getInscrits().entrySet()) {//iteration sur chaque inscrits
 			try {
-				System.out.println(entry.getValue());
 				entry.getKey().nouveauPrix(gagnante.getEnchere(), participants.getPseudo(gagnante.getEnchereur()));// TODO tant qu'on a pas d'interface graphique c'est bloquant...
 			} catch (RemoteException e1) {
 				// TODO Auto-generated catch block
@@ -126,6 +140,7 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente, 
 			encheres.getListeEnchere().clear();//reset des encheres dans tout les cas
 		}
 		if(!enchereFinie) {
+			nbParticipants = participants.taille();
 			FinRoundEnchere(gagnante);
 		} else {
 			finEnchere();
@@ -180,7 +195,7 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente, 
 		nbParticipants = participants.taille();
 		venteEnCours = true;
 		encheres.getListeEnchere().clear();//pour eviter les encheres fantomes
-		objVente = listeObjsVentes.getnextObjet();
+		objVente = listeObjsVentes.getVenteActuelle();
 		prixActuel = objVente.getPrix();
 		if(objVente != null) {
 			for (IAcheteur ach: participants.getInscrits().keySet()) {

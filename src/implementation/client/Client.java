@@ -154,10 +154,14 @@ public class Client extends UnicastRemoteObject implements IAcheteur, Serializab
 //		cli.setServ(bindingClient("//localhost:8810/serveur"));
 //		cli.envoiInscription(inscrit.getTexte());
 
-		Client cli = new Client("toto");
+		Scanner sc = new Scanner(System.in);
+		LOGGER.info("nom: ");
+		Client cli = new Client(sc.nextLine());
 		cli.setServ(bindingClient(nomServeur));
-		cli.envoiInscription("totoKEK");
-		
+		LOGGER.info("pseudo: ");
+		cli.envoiInscription(sc.nextLine());
+
+		LOGGER.info("1 pour envoi enchere au serveur, 0 sinon");
 		cli.sendOrNot();
 	}
 
