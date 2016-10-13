@@ -27,6 +27,7 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente, 
 	private ObjetEnVente objVente;
 	private int prixActuel;
 	private ListeEncheres encheres;
+	private int nbParticipants;
 	private boolean venteEnCours = false;
 	
 	
@@ -119,13 +120,15 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente, 
 	 */
 	public void realiserRoundEnchere() {
 		Enchere gagnante = getBestEnchere();
-		boolean enchereFinie = (gagnante.getEnchere() == 0);//pour detecter si personne n'a fait d'encheres
-		encheres.getListeEnchere().clear();//reset des encheres dans tout les cas
-		if(enchereFinie) {
-			finEnchere();
+		boolean enchereFinie = true;
+		if(gagnante.getEnchereur() != null) {
+			enchereFinie = (gagnante.getEnchere() == 0);//pour detecter si personne n'a fait d'encheres
+			encheres.getListeEnchere().clear();//reset des encheres dans tout les cas
 		}
-		else {
+		if(!enchereFinie) {
 			FinRoundEnchere(gagnante);
+		} else {
+			finEnchere();
 		}
 	}
 
@@ -136,10 +139,6 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente, 
 	public synchronized void rencherir(int prix, IAcheteur acheteur) throws RemoteException {
 		Enchere ench = new Enchere(acheteur, prix);
 		encheres.add(ench);
-		if (encheres.taille() >= participants.taille()) {
-			// TODO regler le prob d'interblocage 
-			realiserRoundEnchere();//Probleme interblocage ici : il fini par appeler le client qui appelle a nouveau rencherir, ce qui bloque.
-		}
 	}
 
 	/* (non-Javadoc)
@@ -147,7 +146,10 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente, 
 	 */
 	@Override
 	public void tempsEcoule(IAcheteur acheteur) throws RemoteException {
-		rencherir(0, acheteur);
+		nbParticipants--;
+		if (nbParticipants <= 0) {
+			realiserRoundEnchere();
+		}
 
 	}
 	
@@ -172,6 +174,7 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente, 
 	 * @throws RemoteException
 	 */
 	public void DebutVente() throws RemoteException {
+		nbParticipants = participants.taille();
 		venteEnCours = true;
 		encheres.getListeEnchere().clear();//pour eviter les encheres fantomes
 		objVente = listeObjsVentes.getnextObjet();

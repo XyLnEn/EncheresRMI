@@ -51,7 +51,7 @@ public class Client extends UnicastRemoteObject implements IAcheteur, Serializab
 	}
 
 	/**
-	 * permet d'entrer un prix pour rencherir. Sera remplacée par une methode de l'interface
+	 * permet d'entrer un prix pour rencherir. Sera remplacï¿½e par une methode de l'interface
 	 */
 	public void envoyerPrix(){
 		Scanner sc = new Scanner(System.in);
@@ -125,6 +125,7 @@ public class Client extends UnicastRemoteObject implements IAcheteur, Serializab
 		this.setState(EtatClient.ATTENTE);
 		try {
 			serv.rencherir(prix, this);
+			serv.tempsEcoule(this);
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
