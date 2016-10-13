@@ -13,6 +13,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.Timer;
 
 import ihm.IHMInscription;
 import implementation.serveur.ObjetEnVente;
@@ -21,6 +22,8 @@ import interfaces.IAcheteur;
 import interfaces.IServeurVente;
 
 public class Client extends UnicastRemoteObject implements IAcheteur, Serializable {
+	
+	
 	
 	/**
 	 * 
@@ -137,6 +140,7 @@ public class Client extends UnicastRemoteObject implements IAcheteur, Serializab
 		obj.creaObj();
 		try {
 			serv.ajouterEnchere(obj);
+			serv.lanceurEnchere();
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -150,11 +154,11 @@ public class Client extends UnicastRemoteObject implements IAcheteur, Serializab
 //		cli.setServ(bindingClient("//localhost:8810/serveur"));
 //		cli.envoiInscription(inscrit.getTexte());
 
-		Client cli = null;
-		cli = new Client("toto");
+		Client cli = new Client("toto");
 		cli.setServ(bindingClient(nomServeur));
-		cli.envoiInscription("toto");
-		cli.AjouterObjAVendre();
+		cli.envoiInscription("totoKEK");
+		
+		cli.sendOrNot();
 	}
 
 	public String getNom() {
@@ -193,5 +197,12 @@ public class Client extends UnicastRemoteObject implements IAcheteur, Serializab
 		this.serv = serv;
 	}
 	
+	public void sendOrNot() {
+		Scanner sc = new Scanner(System.in);
+		int i = sc.nextInt();
+		if(i == 1) {
+			this.AjouterObjAVendre();
+		}
+	}
 	
 }

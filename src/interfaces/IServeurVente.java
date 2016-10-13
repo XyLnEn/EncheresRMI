@@ -33,4 +33,6 @@ public interface IServeurVente extends Remote{
 	public void tempsEcoule(IAcheteur acheteur) throws RemoteException;
 	
 	public void ajouterEnchere(ObjetEnVente obj) throws RemoteException;
+	
+	public void lanceurEnchere() throws RemoteException;
 }

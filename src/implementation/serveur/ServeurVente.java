@@ -55,7 +55,6 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente, 
 			}
 			LOGGER.info("traitement...");
 			participants.add(acheteur, pseudo);
-			System.out.println(participants.taille());
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -67,7 +66,7 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente, 
 
 /******************************Debut des methodes pour realiser l'enchere******************************/
 	
-	/** @author lenny
+	/** @author Lenny Lucas
 	 * methode qui determine quelle enchere est la gagnante
 	 * @return gagnante l'enchere la plus eleve 
 	 */
@@ -83,7 +82,7 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente, 
 		return gagnante;
 	}
 	
-	/**@author lenny
+	/**@author Lenny Lucas
 	 * methode qui previens les clients que l'enchere est finie
 	 */
 	public void finEnchere() {
@@ -99,14 +98,15 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente, 
 		notifyAll();
 	}
 	
-	/**@author lenny
-	 * methode qui previens les clients que le round est terminé. On envoie le nom du gagnant actuel avec la somme proposée
+	/**@author Lenny Lucas
+	 * methode qui previent les clients que le round est terminé. On envoie le nom du gagnant actuel avec la somme proposée
 	 * @param gagnante
 	 */
 	public void FinRoundEnchere(Enchere gagnante) {
 		for (Map.Entry<IAcheteur, String> entry : participants.getInscrits().entrySet()) {//iteration sur chaque inscrits
 			try {
-				entry.getKey().nouveauPrix(gagnante.getEnchere(), participants.getPseudo(gagnante.getEnchereur()));
+				System.out.println(entry.getValue());
+				entry.getKey().nouveauPrix(gagnante.getEnchere(), participants.getPseudo(gagnante.getEnchereur()));// TODO tant qu'on a pas d'interface graphique c'est bloquant...
 			} catch (RemoteException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -114,7 +114,7 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente, 
 		}
 	}
 	
-	/**@author lenny
+	/**@author Lenny Lucas
 	 * methode qui recupere la meilleure enchere et decide si la vente est finie ou si il faut effectuer un nouveau tour.
 	 * 
 	 */
@@ -157,8 +157,11 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente, 
 
 /******************************Debut des methodes pour la gestion du Serveur******************************/
 	
-	public void ajouterEnchere(ObjetEnVente obj) {//devrait etre synchronized
+	public synchronized void ajouterEnchere(ObjetEnVente obj) {//devrait etre synchronized
 		listeObjsVentes.ajouterObjet(obj);
+	}
+	
+	public void lanceurEnchere(){
 		if(participants.taille() >= NB_MIN_ACHETEURS) {
 			try {
 				DebutVente();
@@ -169,7 +172,7 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente, 
 		}
 	}
 	
-	/**@author lenny
+	/**@author Lenny Lucas
 	 * methode qui annonce le nouvel objet a vendre
 	 * @throws RemoteException
 	 */
@@ -187,7 +190,7 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente, 
 		
 	}
 	
-	/**@author lenny
+	/**@author Lenny Lucas
 	 * prepare le serveur pour la connexion des clients
 	 * @param adresse
 	 * @param serveur
