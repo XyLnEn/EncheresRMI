@@ -12,23 +12,25 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-public class IHMInscription extends JFrame implements ActionListener{
+public class IHMInscription extends JFrame implements IHM, ActionListener{
 
 	private static final long serialVersionUID = 1L;
 
-	private Client client = null;
+	private Client client;
+	private IHMPrincipal ihmPrincipal;
 	
 	private JPanel panelPrincipal;
 	private JTextField labelPseudo;
 	private JButton btnPseudo;
 	
-	public IHMInscription() {
+	public IHMInscription(Client c, IHMPrincipal p) {
+		client = c;
+		ihmPrincipal = p;
 		demandePseudo();
 		this.setTitle("Demande d'inscription");
 	    this.setSize(400, 80); 
 	    this.setLocationRelativeTo(null);
 	    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);             
-	    this.setVisible(true);
 	}
 
 	private void demandePseudo() {
@@ -50,12 +52,24 @@ public class IHMInscription extends JFrame implements ActionListener{
 		try {
 			client = new Client(texte);
 		} catch (RemoteException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 //		client.setServ(client.bindingClient("//localhost:8810/serveur"));
 //		client.envoiInscription(texte);
-		new IHMClient();
+//		new IHMClient();
+	}
+
+	public void changerVisibilite(boolean b) {
+		this.setVisible(b);
+	}
+	
+	@Override
+	public void notifier() {
+		
+	}
+	
+	public void travaillerTermine() {
+		ihmPrincipal.signal("inscription");
 	}
 	
 }

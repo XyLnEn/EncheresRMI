@@ -22,12 +22,15 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 
-public class IHMClient extends JFrame {
+public class IHMClient extends JFrame implements IHM {
 	
 	private static final long serialVersionUID = 1L;
 
-	private Client client = null;
-	
+	private Client client;
+	private IHMInscription ihmInscri;
+	private IHMPrincipal ihmPrincipal;
+
+
 	private JPanel panelPrincipal;
 	private JPanel panelImage;
 	private JPanel panelEnchere;
@@ -48,13 +51,14 @@ public class IHMClient extends JFrame {
     /**
      * 
      */
-	public IHMClient() {
+	public IHMClient(Client c, IHMPrincipal p) {
+		client = c;
+		ihmPrincipal = p;
 		construireIHM();
 		this.setTitle("La teamPatoune aux enchères");
 	    this.setSize(600, 400); 
 	    this.setLocationRelativeTo(null);
-	    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);             
-	    this.setVisible(true);		    	    
+	    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);             	    	    
 	}
 	
 	/**
@@ -109,13 +113,27 @@ public class IHMClient extends JFrame {
 	    this.setContentPane(panelPrincipal);
 	}
 	
+	public void changerVisibilite(boolean b) {
+		this.setVisible(b);
+	}
+	
 	public IAcheteur getClient() {
 		return client;
 	}
 
-	public static void main(String[] args) {
-		new IHMInscription();
-//		new IHMClient();
+	public IHMInscription getIhmInscri() {
+		return ihmInscri;
+	}
+	
+
+
+	@Override
+	public void notifier() {
+		
+	}
+	
+	public void travaillerTermine() {
+		
 	}
 	
 }

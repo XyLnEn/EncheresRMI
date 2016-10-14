@@ -43,6 +43,8 @@ public class Client extends UnicastRemoteObject implements IAcheteur, Serializab
 	private EtatClient state;
 	private IServeurVente serv;
 	
+	private ObserverClient obsClient;
+	
 	public Client(String nom) throws RemoteException {
 		this.nom = nom;
 		this.id = "1";
@@ -53,6 +55,14 @@ public class Client extends UnicastRemoteObject implements IAcheteur, Serializab
 		LOGGER.setLevel(Level.INFO);
 	}
 
+	public Client() throws RemoteException {
+		this.id = "1";
+		this.prixObjEnEnchere = 0;
+		this.obj = null;
+		this.nomMaxDonnateur = null;
+		this.setState(EtatClient.ATTENTE);
+		LOGGER.setLevel(Level.INFO);
+	}
 	/**
 	 * permet d'entrer un prix pour rencherir. Sera remplac�e par une methode de l'interface
 	 */
