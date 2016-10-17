@@ -14,6 +14,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Timer;
+import java.util.TimerTask;
 
 import ihm.IHMInscription;
 import implementation.serveur.ObjetEnVente;
@@ -23,7 +24,15 @@ import interfaces.IServeurVente;
 
 public class Client extends UnicastRemoteObject implements IAcheteur, Serializable {
 	
-	
+	public class ChronoFinEnchere extends TimerTask
+	{
+		@Override
+		public void run() {
+			System.out.println("STOP! HAMMERTIME!");
+			//ici on passera le client en etat terminé et on appelera la methode tempsEcoule.
+			
+		}
+	}
 	
 	/**
 	 * 
@@ -35,14 +44,22 @@ public class Client extends UnicastRemoteObject implements IAcheteur, Serializab
 	
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);//permet gestion des affichages consoles
 
+/****************Pour le Client******************/
 	private String nom;
 	private String id;
 	private int prixObjEnEnchere;
 	private ObjetEnVente obj;
 	private String nomMaxDonnateur;
 	private EtatClient state;
+	
+/****************Pour le Serveur*****************/
 	private IServeurVente serv;
 	
+/****************Pour le Timer*******************/
+	private TimerTask task = new ChronoFinEnchere();
+	private Timer timer = new Timer();
+	
+/***************Pour l'Interface****************/
 	private ObserverClient obsClient;
 	
 	public Client(String nom) throws RemoteException {
@@ -70,7 +87,9 @@ public class Client extends UnicastRemoteObject implements IAcheteur, Serializab
 		Scanner sc = new Scanner(System.in);
 		LOGGER.info("nouveau prix : ");
 		int newprix = sc.nextInt();
-		this.envoiRencherir(newprix, this.serv);
+		if(this.getState() == EtatClient.ENCHERE) {
+			this.envoiRencherir(newprix, this.serv);
+		}
 	}
 
 	@Override
@@ -81,6 +100,7 @@ public class Client extends UnicastRemoteObject implements IAcheteur, Serializab
 		LOGGER.info("objet:" + obj.getNom());
 		LOGGER.info("descr:" + obj.getDescription());
 		LOGGER.info("prix:" + this.getPrix());
+		timer.schedule(task, 5000);
 		this.envoyerPrix();
 	}
 
