@@ -18,7 +18,7 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente, 
 
 	private final static int portConnexion = 8811;
 	private final static String nomServeur = "//localhost:" + portConnexion + "/serveur";
-	private final static int NB_MIN_ACHETEURS = 1;
+	private final static int NB_MIN_ACHETEURS = 2;
 	
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);//permet gestion des affichages consoles
 
@@ -162,7 +162,7 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente, 
 	@Override
 	public void tempsEcoule(IAcheteur acheteur) throws RemoteException {
 		nbParticipants--;
-		if (nbParticipants <= 0) {
+		if (nbParticipants == 0) {
 			realiserRoundEnchere();
 		}
 

@@ -26,11 +26,21 @@ public class Client extends UnicastRemoteObject implements IAcheteur, Serializab
 	
 	public class ChronoFinEnchere extends TimerTask
 	{
+		private Client cli;
+		public ChronoFinEnchere(Client c) {
+			cli = c;
+		}
+		
 		@Override
 		public void run() {
-			System.out.println("STOP! HAMMERTIME!");
-			//ici on passera le client en etat terminé et on appelera la methode tempsEcoule.
-			
+			System.out.println("TROP TARD");
+			cli.setState(EtatClient.ATTENTE);
+			try {
+				serv.tempsEcoule(cli);
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -46,7 +56,6 @@ public class Client extends UnicastRemoteObject implements IAcheteur, Serializab
 
 /****************Pour le Client******************/
 	private String nom;
-	private String id;
 	private int prixObjEnEnchere;
 	private ObjetEnVente obj;
 	private String nomMaxDonnateur;
@@ -56,7 +65,6 @@ public class Client extends UnicastRemoteObject implements IAcheteur, Serializab
 	private IServeurVente serv;
 	
 /****************Pour le Timer*******************/
-	private TimerTask task = new ChronoFinEnchere();
 	private Timer timer = new Timer();
 	
 /***************Pour l'Interface****************/
@@ -64,7 +72,6 @@ public class Client extends UnicastRemoteObject implements IAcheteur, Serializab
 	
 	public Client(String nom) throws RemoteException {
 		this.nom = nom;
-		this.id = "1";
 		this.prixObjEnEnchere = 0;
 		this.obj = null;
 		this.nomMaxDonnateur = null;
@@ -73,21 +80,28 @@ public class Client extends UnicastRemoteObject implements IAcheteur, Serializab
 	}
 
 	public Client() throws RemoteException {
-		this.id = "1";
 		this.prixObjEnEnchere = 0;
 		this.obj = null;
 		this.nomMaxDonnateur = null;
 		this.setState(EtatClient.ATTENTE);
 		LOGGER.setLevel(Level.INFO);
 	}
+	
+	public void cancelTimer() {
+		timer.cancel();
+		timer = new Timer();
+	}
+	
 	/**
 	 * permet d'entrer un prix pour rencherir. Sera remplac�e par une methode de l'interface
 	 */
 	public void envoyerPrix(){
+		timer.schedule(new ChronoFinEnchere(this), 5000);
 		Scanner sc = new Scanner(System.in);
 		LOGGER.info("nouveau prix : ");
 		int newprix = sc.nextInt();
 		if(this.getState() == EtatClient.ENCHERE) {
+			cancelTimer();
 			this.envoiRencherir(newprix, this.serv);
 		}
 	}
@@ -100,7 +114,6 @@ public class Client extends UnicastRemoteObject implements IAcheteur, Serializab
 		LOGGER.info("objet:" + obj.getNom());
 		LOGGER.info("descr:" + obj.getDescription());
 		LOGGER.info("prix:" + this.getPrix());
-		timer.schedule(task, 5000);
 		this.envoyerPrix();
 	}
 
@@ -188,19 +201,14 @@ public class Client extends UnicastRemoteObject implements IAcheteur, Serializab
 		LOGGER.info("nom: ");
 		Client cli = new Client(sc.nextLine());
 		cli.setServ(bindingClient(nomServeur));
-		LOGGER.info("pseudo: ");
-		cli.envoiInscription(sc.nextLine());
-
+		cli.envoiInscription(cli.getNom());
+		
 		LOGGER.info("1 pour envoi enchere au serveur, 0 sinon");
 		cli.sendOrNot();
 	}
 
 	public String getNom() {
 		return nom;
-	}
-
-	public String getId() {
-		return id;
 	}
 
 	public int getPrix() {
