@@ -129,9 +129,9 @@ public class Client extends UnicastRemoteObject implements IAcheteur, Serializab
 		this.setState(EtatClient.ENCHERE);
 		this.prixObjEnEnchere = prix;
 		nomMaxDonnateur = pseudo;
-		LOGGER.info("Nouveau prix : " + prix);
-		LOGGER.info("envoye par " + pseudo);
-		this.envoyerPrix();
+//		LOGGER.info("Nouveau prix : " + prix);
+//		LOGGER.info("envoye par " + pseudo);
+		obsClient.notifier();
 	}
 	
 	
@@ -176,24 +176,8 @@ public class Client extends UnicastRemoteObject implements IAcheteur, Serializab
 			e.printStackTrace();
 		}
 	}
-
-//	public static void main(String[] args) throws RemoteException {
-//
-////		IAcheteur cli = new Client(inscrit.getTexte());
-////		cli.setServ(bindingClient("//localhost:8810/serveur"));
-////		cli.envoiInscription(inscrit.getTexte());
-//
-//		Scanner sc = new Scanner(System.in);
-//		LOGGER.info("nom: ");
-//		Client cli = new Client(sc.nextLine());
-//		cli.setServ(bindingClient(nomServeur));
-//		cli.envoiInscription(cli.getNom());
-//		
-//		LOGGER.info("1 pour envoi enchere au serveur, 0 sinon");
-//		cli.sendOrNot();
-//	}
-
 	
+//***********************************************getteur et setteurs***********************************************//	
 	
 	public String getNom() {
 		return nom;
