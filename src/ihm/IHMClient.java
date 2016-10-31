@@ -1,5 +1,6 @@
 package ihm;
 
+
 import implementation.client.Client;
 import interfaces.IAcheteur;
 
@@ -80,6 +81,7 @@ public class IHMClient extends JFrame implements IHM, ActionListener {
 		labelPrixObject = new JLabel(); //"20 €"
 		labelInfoVendu = new JLabel("Pas encore d'acheteurs");	   
 	    btnEncherir = new JButton("Enchérir");
+	    btnEncherir.addActionListener(this);
 	    enchere = new JTextField("Saisir votre enchère", 20);	
 	    
 		try {
