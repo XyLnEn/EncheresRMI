@@ -18,7 +18,7 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente, 
 
 	private final static int portConnexion = 8811;
 	private final static String nomServeur = "//localhost:" + portConnexion + "/serveur";
-	private final static int NB_MIN_ACHETEURS = 2;
+	private final static int NB_MIN_ACHETEURS = 1;
 	
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);//permet gestion des affichages consoles
 
@@ -174,6 +174,7 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente, 
 	
 	public synchronized void ajouterEnchere(ObjetEnVente obj) {//devrait etre synchronized
 		listeObjsVentes.ajouterObjet(obj);
+		LOGGER.info("objet bien reçu");
 	}
 	
 	public void lanceurEnchere(){
@@ -210,10 +211,10 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente, 
 	 * @param adresse
 	 * @param serveur
 	 */
-	public void bindingServeur(String adresse, IServeurVente serveur) {
+	public void bindingServeur(String adresse, int portConnexion) {
 		try {
 			Registry registry = LocateRegistry.createRegistry(portConnexion);
-			registry.rebind(adresse, serveur);
+			registry.rebind(adresse, this);
 		} catch (AccessException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -232,7 +233,7 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente, 
 	public static void main(String[] args) throws RemoteException {
 		
 		ServeurVente serveur = new ServeurVente();
-		serveur.bindingServeur(nomServeur, serveur);
+		serveur.bindingServeur(nomServeur, portConnexion);
 		
 		
 	}

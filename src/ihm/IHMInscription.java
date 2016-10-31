@@ -12,7 +12,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-public class IHMInscription extends JFrame implements IHM, ActionListener{
+public class IHMInscription extends JFrame implements IHM, ActionListener {
 
 	private static final long serialVersionUID = 1L;
 
@@ -49,14 +49,8 @@ public class IHMInscription extends JFrame implements IHM, ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String texte = (labelPseudo.getText());
-		try {
-			client = new Client(texte);
-		} catch (RemoteException e1) {
-			e1.printStackTrace();
-		}
-//		client.setServ(client.bindingClient("//localhost:8810/serveur"));
-//		client.envoiInscription(texte);
-//		new IHMClient();
+		client.setNom(texte);
+		this.travaillerTermine();
 	}
 
 	public void changerVisibilite(boolean b) {

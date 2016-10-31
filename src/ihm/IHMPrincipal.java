@@ -1,6 +1,7 @@
 package ihm;
 
 import implementation.client.Client;
+import implementation.client.ObserverClient;
 
 import java.rmi.RemoteException;
 import java.util.HashMap;
@@ -8,8 +9,11 @@ import java.util.Map;
 
 public class IHMPrincipal implements IHM {
 
+	private final static int portConnexion = 8811;
+	private final static String nomServeur = "//localhost:" + portConnexion + "/serveur";
+	
 	private Map<String, IHM> ihms;
-	private Client client = null;
+	private Client client;
 	
 	public Map<String, IHM> getIhms() {
 		return ihms;
@@ -20,6 +24,11 @@ public class IHMPrincipal implements IHM {
 		client = new Client();
 		ihms.put("inscription",new IHMInscription(client, this));
 		ihms.put("client", new IHMClient(client, this));
+		ihms.put("nouvelObjet", new IHMNouvelObjetEnVente(client, this));
+		ihms.get("inscription").changerVisibilite(true);
+		ObserverClient obs = new ObserverClient();
+		obs.setIhms(ihms.values());
+		client.setObsClient(obs);
 	}
 	
 	
@@ -38,8 +47,12 @@ public class IHMPrincipal implements IHM {
 	public void signal(String key) {
 		switch (key) {
 		case "inscription" :
+			System.out.println("client :" + client.getNom());
 			ihms.get("inscription").changerVisibilite(false);
 			ihms.get("client").changerVisibilite(true);
+			ihms.get("nouvelObjet").changerVisibilite(true);
+			client.setServ(client.bindingClient(nomServeur,portConnexion));
+			client.envoiInscription(client.getNom());
 			break;
 
 		default:
@@ -47,7 +60,7 @@ public class IHMPrincipal implements IHM {
 		}	
 	}
 
-	public static void main(String[] args) {
-//		new IHMClient();
+	public static void main(String[] args) throws RemoteException {
+		new IHMPrincipal();
 	}
 }

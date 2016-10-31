@@ -1,6 +1,7 @@
 package implementation.client;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import ihm.IHM;
@@ -8,15 +9,23 @@ import ihm.IHM;
 
 public class ObserverClient {
 
-	private List<IHM> ihms = new ArrayList<IHM>();
+	private Collection<IHM> ihms = new ArrayList<IHM>();
 
-	public List<IHM> getIhms() {
+	public Collection<IHM> getIhms() {
 		return ihms;
 	}
 	
+	
+	public void setIhms(Collection<IHM> collection) {
+		this.ihms = collection;
+	}
+
+
 	public void ajoutIhm(IHM e) {
 		ihms.add(e);
 	}
+	
+	
 	
 	public void notifier() {
 		for (IHM jFrame : ihms) {

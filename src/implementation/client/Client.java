@@ -49,8 +49,8 @@ public class Client extends UnicastRemoteObject implements IAcheteur, Serializab
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private final static int portConnexion = 8811;
-	private final static String nomServeur = "//localhost:" + portConnexion + "/serveur";
+//	private final static int portConnexion = 8811;
+//	private final static String nomServeur = "//localhost:" + portConnexion + "/serveur";
 	
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);//permet gestion des affichages consoles
 
@@ -77,6 +77,7 @@ public class Client extends UnicastRemoteObject implements IAcheteur, Serializab
 		this.nomMaxDonnateur = null;
 		this.setState(EtatClient.ATTENTE);
 		LOGGER.setLevel(Level.INFO);
+		
 	}
 
 	public Client() throws RemoteException {
@@ -113,8 +114,9 @@ public class Client extends UnicastRemoteObject implements IAcheteur, Serializab
 		this.prixObjEnEnchere = prix;
 		LOGGER.info("objet:" + obj.getNom());
 		LOGGER.info("descr:" + obj.getDescription());
-		LOGGER.info("prix:" + this.getPrix());
-		this.envoyerPrix();
+		LOGGER.info("prix:" + this.getPrixObjEnEnchere());
+//		this.envoyerPrix();
+		obsClient.notifier();
 	}
 
 	@Override
@@ -135,7 +137,7 @@ public class Client extends UnicastRemoteObject implements IAcheteur, Serializab
 	}
 	
 	
-	public static IServeurVente bindingClient(String adresse) {
+	public static IServeurVente bindingClient(String adresse,int portConnexion) {
 		IServeurVente serveurVente = null;
 		try {
 			Registry registry = LocateRegistry.getRegistry(portConnexion);
@@ -191,36 +193,54 @@ public class Client extends UnicastRemoteObject implements IAcheteur, Serializab
 	}
 	
 
-	public static void main(String[] args) throws RemoteException {
+//	public static void main(String[] args) throws RemoteException {
+//
+////		IAcheteur cli = new Client(inscrit.getTexte());
+////		cli.setServ(bindingClient("//localhost:8810/serveur"));
+////		cli.envoiInscription(inscrit.getTexte());
+//
+//		Scanner sc = new Scanner(System.in);
+//		LOGGER.info("nom: ");
+//		Client cli = new Client(sc.nextLine());
+//		cli.setServ(bindingClient(nomServeur));
+//		cli.envoiInscription(cli.getNom());
+//		
+//		LOGGER.info("1 pour envoi enchere au serveur, 0 sinon");
+//		cli.sendOrNot();
+//	}
 
-//		IAcheteur cli = new Client(inscrit.getTexte());
-//		cli.setServ(bindingClient("//localhost:8810/serveur"));
-//		cli.envoiInscription(inscrit.getTexte());
-
-		Scanner sc = new Scanner(System.in);
-		LOGGER.info("nom: ");
-		Client cli = new Client(sc.nextLine());
-		cli.setServ(bindingClient(nomServeur));
-		cli.envoiInscription(cli.getNom());
-		
-		LOGGER.info("1 pour envoi enchere au serveur, 0 sinon");
-		cli.sendOrNot();
-	}
-
+	
+	
 	public String getNom() {
 		return nom;
 	}
 
-	public int getPrix() {
+	public void setNom(String nom) {
+		this.nom = nom;
+	}
+
+	public int getPrixObjEnEnchere() {
 		return prixObjEnEnchere;
+	}
+
+	public void setPrixObjEnEnchere(int prixObjEnEnchere) {
+		this.prixObjEnEnchere = prixObjEnEnchere;
 	}
 
 	public ObjetEnVente getObj() {
 		return obj;
 	}
 
+	public void setObj(ObjetEnVente obj) {
+		this.obj = obj;
+	}
+
 	public String getNomMaxDonnateur() {
 		return nomMaxDonnateur;
+	}
+
+	public void setNomMaxDonnateur(String nomMaxDonnateur) {
+		this.nomMaxDonnateur = nomMaxDonnateur;
 	}
 
 	public EtatClient getState() {
@@ -238,7 +258,15 @@ public class Client extends UnicastRemoteObject implements IAcheteur, Serializab
 	public void setServ(IServeurVente serv) {
 		this.serv = serv;
 	}
-	
+
+	public ObserverClient getObsClient() {
+		return obsClient;
+	}
+
+	public void setObsClient(ObserverClient obsClient) {
+		this.obsClient = obsClient;
+	}
+
 	public void sendOrNot() {
 		Scanner sc = new Scanner(System.in);
 		int i = sc.nextInt();

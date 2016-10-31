@@ -69,14 +69,14 @@ public class IHMClient extends JFrame implements IHM {
 		panelPrincipal.setLayout(new GridLayout(1, 2, 5, 5));
 		
 //		labelNom = new JLabel("Une grosse patoune");
-		labelDescr = new JTextArea("Description de l'objet : " + "blablablasssssssssssssssssssssssssssssssssssssssssss");
+		labelDescr = new JTextArea(); //"Description de l'objet : " + "blablablasssssssssssssssssssssssssssssssssssssssssss"
 		labelDescr.setLineWrap(true);
 		labelDescr.setWrapStyleWord(true);
 		labelDescr.setOpaque(false);
 		labelDescr.setEditable(false);
 		
-		labelPrixObject = new JLabel("20 €");
-		labelInfoVendu = new JLabel("Vendu à ... ");	   
+		labelPrixObject = new JLabel(); //"20 €"
+		labelInfoVendu = new JLabel("Pas encore d'acheteurs");	   
 	    btnEncherir = new JButton("Enchérir");
 	    enchere = new JTextField("Saisir votre enchère", 20);	
 	    
@@ -99,7 +99,7 @@ public class IHMClient extends JFrame implements IHM {
 	    
 	    panelObjet = new JPanel();
 	    panelObjet.setLayout(new GridLayout(4, 1));
-	    panelObjet.setBorder(BorderFactory.createTitledBorder("Une grosse patoune "));
+	    
 //	    panelObjet.add(labelNom);
 	    panelObjet.add(labelDescr);
 	    panelObjet.add(labelPrixObject);
@@ -129,7 +129,13 @@ public class IHMClient extends JFrame implements IHM {
 
 	@Override
 	public void notifier() {
+		labelDescr.setText("Description de l'objet : " + client.getObj().getDescription());
+		labelPrixObject.setText(client.getPrixObjEnEnchere() + "€");
+		panelObjet.setBorder(BorderFactory.createTitledBorder(client.getObj().getNom()));
 		
+		if(client.getNomMaxDonnateur().compareTo(null) != 0) {
+			labelInfoVendu.setText("Meilleur enchereur : " + client.getNomMaxDonnateur());
+		}
 	}
 	
 	public void travaillerTermine() {
