@@ -16,9 +16,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import ihm.IHMInscription;
 import implementation.serveur.ObjetEnVente;
-import implementation.serveur.ServeurVente;
 import interfaces.IAcheteur;
 import interfaces.IServeurVente;
 
@@ -103,7 +101,7 @@ public class Client extends UnicastRemoteObject implements IAcheteur, Serializab
 		int newprix = sc.nextInt();
 		if(this.getState() == EtatClient.ENCHERE) {
 			cancelTimer();
-			this.envoiRencherir(newprix, this.serv);
+			this.envoiRencherir(newprix);
 		}
 	}
 
@@ -112,9 +110,9 @@ public class Client extends UnicastRemoteObject implements IAcheteur, Serializab
 		this.setState(EtatClient.ENCHERE);
 		obj = Objet;
 		this.prixObjEnEnchere = prix;
-		LOGGER.info("objet:" + obj.getNom());
-		LOGGER.info("descr:" + obj.getDescription());
-		LOGGER.info("prix:" + this.getPrixObjEnEnchere());
+//		LOGGER.info("objet:" + obj.getNom());
+//		LOGGER.info("descr:" + obj.getDescription());
+//		LOGGER.info("prix:" + this.getPrixObjEnEnchere());
 //		this.envoyerPrix();
 		obsClient.notifier();
 	}
@@ -154,7 +152,6 @@ public class Client extends UnicastRemoteObject implements IAcheteur, Serializab
 			e.printStackTrace();
 		}
 		LOGGER.info("connexion etablie");
-		//passe en etat enchere
 		return serveurVente;
 		
 	}
@@ -169,7 +166,7 @@ public class Client extends UnicastRemoteObject implements IAcheteur, Serializab
 		this.setState(EtatClient.ENCHERE);
 	}
 	
-	public void envoiRencherir(int prix, IServeurVente serveurVente) {
+	public void envoiRencherir(int prix) {
 		this.setState(EtatClient.ATTENTE);
 		try {
 			serv.rencherir(prix, this);
@@ -179,19 +176,6 @@ public class Client extends UnicastRemoteObject implements IAcheteur, Serializab
 			e.printStackTrace();
 		}
 	}
-	
-	public void AjouterObjAVendre() {
-		ObjetEnVente obj= new ObjetEnVente(null, null, 0, null);
-		obj.creaObj();
-		try {
-			serv.ajouterEnchere(obj);
-			serv.lanceurEnchere();
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
 
 //	public static void main(String[] args) throws RemoteException {
 //
@@ -265,14 +249,6 @@ public class Client extends UnicastRemoteObject implements IAcheteur, Serializab
 
 	public void setObsClient(ObserverClient obsClient) {
 		this.obsClient = obsClient;
-	}
-
-	public void sendOrNot() {
-		Scanner sc = new Scanner(System.in);
-		int i = sc.nextInt();
-		if(i == 1) {
-			this.AjouterObjAVendre();
-		}
 	}
 	
 }
