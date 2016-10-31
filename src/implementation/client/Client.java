@@ -91,19 +91,21 @@ public class Client extends UnicastRemoteObject implements IAcheteur, Serializab
 		timer = new Timer();
 	}
 	
-	/**
-	 * permet d'entrer un prix pour rencherir. Sera remplac�e par une methode de l'interface
-	 */
-	public void envoyerPrix(){
-		timer.schedule(new ChronoFinEnchere(this), 5000);
-		Scanner sc = new Scanner(System.in);
-		LOGGER.info("nouveau prix : ");
-		int newprix = sc.nextInt();
-		if(this.getState() == EtatClient.ENCHERE) {
-			cancelTimer();
-			this.envoiRencherir(newprix);
-		}
+	public void lancerTimer() {
+		timer.schedule(new ChronoFinEnchere(this), 30000);
 	}
+	
+//	/**
+//	 * permet d'entrer un prix pour rencherir. Sera remplac�e par une methode de l'interface
+//	 */
+//	public void envoyerPrix(){
+//		Scanner sc = new Scanner(System.in);
+//		LOGGER.info("nouveau prix : ");
+//		int newprix = sc.nextInt();
+//		if(this.getState() == EtatClient.ENCHERE) {
+//			this.envoiRencherir(newprix);
+//		}
+//	}
 
 	@Override
 	public void nouvelleSoumission(ObjetEnVente Objet, int prix) throws RemoteException {
@@ -167,13 +169,15 @@ public class Client extends UnicastRemoteObject implements IAcheteur, Serializab
 	}
 	
 	public void envoiRencherir(int prix) {
-		this.setState(EtatClient.ATTENTE);
-		try {
-			serv.rencherir(prix, this);
-			serv.tempsEcoule(this);
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if(this.getState() != EtatClient.ATTENTE) {
+			this.setState(EtatClient.ATTENTE);
+			try {
+				serv.rencherir(prix, this);
+				serv.tempsEcoule(this);
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	

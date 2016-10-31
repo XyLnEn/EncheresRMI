@@ -138,6 +138,7 @@ public class IHMClient extends JFrame implements IHM, ActionListener {
 		if(client.getNomMaxDonnateur() != null) {
 			labelInfoVendu.setText("Meilleur enchereur : " + client.getNomMaxDonnateur());
 		}
+		client.lancerTimer();
 	}
 	
 	public void travaillerTermine() {
@@ -146,6 +147,7 @@ public class IHMClient extends JFrame implements IHM, ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		client.cancelTimer();
 		String texteEnchere = (enchere.getText());
 		client.envoiRencherir(Integer.parseInt(texteEnchere));
 	}
