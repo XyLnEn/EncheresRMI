@@ -162,6 +162,7 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente, 
 	@Override
 	public void tempsEcoule(IAcheteur acheteur) throws RemoteException {
 		nbParticipants--;
+		LOGGER.info("fin d'enchere pour une personne");
 		if (nbParticipants == 0) {
 			realiserRoundEnchere();
 		}

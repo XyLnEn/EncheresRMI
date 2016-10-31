@@ -7,6 +7,8 @@ import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 
@@ -22,7 +24,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 
-public class IHMClient extends JFrame implements IHM {
+public class IHMClient extends JFrame implements IHM, ActionListener {
 	
 	private static final long serialVersionUID = 1L;
 
@@ -133,13 +135,19 @@ public class IHMClient extends JFrame implements IHM {
 		labelPrixObject.setText(client.getPrixObjEnEnchere() + "€");
 		panelObjet.setBorder(BorderFactory.createTitledBorder(client.getObj().getNom()));
 		
-		if(client.getNomMaxDonnateur().compareTo(null) != 0) {
+		if(client.getNomMaxDonnateur() != null) {
 			labelInfoVendu.setText("Meilleur enchereur : " + client.getNomMaxDonnateur());
 		}
 	}
 	
 	public void travaillerTermine() {
 		
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		String texteEnchere = (enchere.getText());
+		client.envoiRencherir(Integer.parseInt(texteEnchere));
 	}
 	
 }
