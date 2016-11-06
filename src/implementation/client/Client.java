@@ -238,4 +238,8 @@ public class Client extends UnicastRemoteObject implements IAcheteur, Serializab
 		this.obsClient = obsClient;
 	}
 	
+	public void checkConnexion() {
+		//verifie que le lien est encore en place
+	}
+	
 }

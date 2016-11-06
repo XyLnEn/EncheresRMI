@@ -8,22 +8,54 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Timer;
+import java.util.Map.Entry;
+import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import implementation.client.Client;
+import implementation.client.EtatClient;
+import implementation.client.Client.ChronoFinEnchere;
 import interfaces.IAcheteur;
 import interfaces.IServeurVente;
 
 public class ServeurVente extends UnicastRemoteObject implements IServeurVente, Serializable {
 
+	public class ChronoVerifConnexion extends TimerTask
+	{
+		
+		@Override
+		public void run() {
+			
+			Iterator<Map.Entry<IAcheteur, String>> iter = participants.entrySet().iterator();
+			while (iter.hasNext()) {
+			    Map.Entry<IAcheteur, String> entry = iter.next();
+			    try {
+					entry.getKey().checkConnexion();
+				} catch (RemoteException e) {
+					LOGGER.info("detection d'un client qui est partit, suppression...");
+					iter.remove();
+				}
+			}
+			
+		}
+	}
+	
+	/****************Pour le Timer*******************/
+	private Timer timer = new Timer();
+	
 	private final int portConnexion = 1099;
 	private String nomServeur = "implementation.serveur.ServeurVente";
 	private final static int NB_MIN_ACHETEURS = 1;
 	
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);//permet gestion des affichages consoles
 
-	private ListeInscrits participants;
+	private Map<IAcheteur, String> participants;
 	private ListeObjetEnVente listeObjsVentes;
 	private ObjetEnVente objVente;
 	private int prixActuel;
@@ -34,12 +66,13 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente, 
 	
 	protected ServeurVente() throws RemoteException {
 
-		this.participants = new ListeInscrits();
+		this.participants = new Hashtable<IAcheteur, String>();
 		this.listeObjsVentes = new ListeObjetEnVente();
 		this.objVente = null;
 		this.prixActuel = 0;
 		this.encheres = new ListeEncheres();
 		LOGGER.setLevel(Level.INFO);
+		this.timer.scheduleAtFixedRate(new ChronoVerifConnexion(),0, 30000);
 	}
 	
 /******************************Debut des methodes pour gerer l'inscription des Clients******************************/
@@ -55,7 +88,7 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente, 
 				wait();
 			}
 			LOGGER.info("traitement...");
-			participants.add(acheteur, pseudo);
+			participants.put(acheteur, pseudo);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -93,7 +126,7 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente, 
 	 */
 	public void finEnchere() {
 		listeObjsVentes.FinirVente();
-		for (Map.Entry<IAcheteur, String> entry : participants.getInscrits().entrySet()) {//iteration sur chaque inscrits
+		for (Map.Entry<IAcheteur, String> entry : participants.entrySet()) {//iteration sur chaque inscrits
 			try {
 				entry.getKey().objetVendu();
 			} catch (RemoteException e1) {
@@ -102,7 +135,7 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente, 
 			}
 		}
 		signalFinRound();
-		if((listeObjsVentes.getObjetsVentes().size() > 0) && (participants.taille() >= NB_MIN_ACHETEURS)) {
+		if((listeObjsVentes.getObjetsVentes().size() > 0) && (participants.size() >= NB_MIN_ACHETEURS)) {
 			try {
 				DebutVente();
 			} catch (RemoteException e) {
@@ -119,9 +152,9 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente, 
 	 * @param gagnante
 	 */
 	public void FinRoundEnchere(Enchere gagnante) {
-		for (Map.Entry<IAcheteur, String> entry : participants.getInscrits().entrySet()) {//iteration sur chaque inscrits
+		for (Map.Entry<IAcheteur, String> entry : participants.entrySet()) {//iteration sur chaque inscrits
 			try {
-				entry.getKey().nouveauPrix(gagnante.getEnchere(), participants.getPseudo(gagnante.getEnchereur()));// TODO tant qu'on a pas d'interface graphique c'est bloquant...
+				entry.getKey().nouveauPrix(gagnante.getEnchere(), participants.get(gagnante.getEnchereur()));
 			} catch (RemoteException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -141,7 +174,7 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente, 
 			encheres.getListeEnchere().clear();//reset des encheres dans tout les cas
 		}
 		if(!enchereFinie) {
-			nbParticipants = participants.taille();
+			nbParticipants = participants.size();
 			FinRoundEnchere(gagnante);
 		} else {
 			finEnchere();
@@ -179,7 +212,7 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente, 
 	}
 	
 	public void lanceurEnchere(){
-		if(participants.taille() >= NB_MIN_ACHETEURS) {
+		if(participants.size() >= NB_MIN_ACHETEURS) {
 			try {
 				DebutVente();
 			} catch (RemoteException e) {
@@ -194,13 +227,13 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente, 
 	 * @throws RemoteException
 	 */
 	public void DebutVente() throws RemoteException {
-		nbParticipants = participants.taille();
+		nbParticipants = participants.size();
 		venteEnCours = true;
 		encheres.getListeEnchere().clear();//pour eviter les encheres fantomes
 		objVente = listeObjsVentes.getVenteActuelle();
 		prixActuel = objVente.getPrix();
 		if(objVente != null) {
-			for (IAcheteur ach: participants.getInscrits().keySet()) {
+			for (IAcheteur ach: participants.keySet()) {
 				ach.nouvelleSoumission(objVente, prixActuel);
 			}
 		}
@@ -214,12 +247,16 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente, 
 	 */
 	public void bindingServeur(String adresse, int portConnexion) {
 		try {
+			LOGGER.info("adresse du serveur: " + InetAddress.getLocalHost().getHostAddress());
 			Registry registry = LocateRegistry.createRegistry(portConnexion);
 			registry.rebind(adresse, this);
 		} catch (AccessException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -236,14 +273,13 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente, 
 		ServeurVente serveur = new ServeurVente();
 		serveur.bindingServeur(serveur.nomServeur, serveur.portConnexion);
 		
-		
 	}
 	
 /******************************Fin du main du Serveur******************************/
 
 /******************************Getteurs/setteurs******************************/
 	
-	public ListeInscrits getParticipants() {
+	public Map<IAcheteur, String> getParticipants() {
 		return participants;
 	}
 

@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.util.Hashtable;
 import java.util.Map;
 
+
 public class ListeInscrits  implements Serializable {
 
 	private Map<IAcheteur, String> inscrits;
