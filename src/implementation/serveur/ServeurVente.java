@@ -1,6 +1,8 @@
 package implementation.serveur;
 
 import java.io.Serializable;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.rmi.AccessException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -10,14 +12,13 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import implementation.client.Client;
 import interfaces.IAcheteur;
 import interfaces.IServeurVente;
 
 public class ServeurVente extends UnicastRemoteObject implements IServeurVente, Serializable {
 
-	private final static int portConnexion = 8811;
-	private final static String nomServeur = "//localhost:" + portConnexion + "/serveur";
+	private final int portConnexion = 8811;
+	private String nomServeur;
 	private final static int NB_MIN_ACHETEURS = 1;
 	
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);//permet gestion des affichages consoles
@@ -32,7 +33,13 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente, 
 	
 	
 	protected ServeurVente() throws RemoteException {
-
+		try {
+			this.nomServeur  = "rmi://" + InetAddress.getLocalHost().getHostAddress() + "/serveur";
+			LOGGER.info("adresse du serveur: " + this.nomServeur);
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		this.participants = new ListeInscrits();
 		this.listeObjsVentes = new ListeObjetEnVente();
 		this.objVente = null;
@@ -233,7 +240,7 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente, 
 	public static void main(String[] args) throws RemoteException {
 		
 		ServeurVente serveur = new ServeurVente();
-		serveur.bindingServeur(nomServeur, portConnexion);
+		serveur.bindingServeur(serveur.nomServeur, serveur.portConnexion);
 		
 		
 	}

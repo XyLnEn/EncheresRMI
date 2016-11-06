@@ -8,9 +8,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class IHMPrincipal implements IHM {
-
-	private final static int portConnexion = 8811;
-	private final static String nomServeur = "//localhost:" + portConnexion + "/serveur";
 	
 	private Map<String, IHM> ihms;
 	private Client client;
@@ -51,7 +48,6 @@ public class IHMPrincipal implements IHM {
 			ihms.get("inscription").changerVisibilite(false);
 			ihms.get("client").changerVisibilite(true);
 			ihms.get("nouvelObjet").changerVisibilite(true);
-			client.setServ(client.bindingClient(nomServeur,portConnexion));
 			client.envoiInscription(client.getNom());
 			break;
 

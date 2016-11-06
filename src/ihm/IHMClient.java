@@ -10,6 +10,8 @@ import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 
@@ -82,7 +84,13 @@ public class IHMClient extends JFrame implements IHM, ActionListener {
 		labelInfoVendu = new JLabel("Pas encore d'acheteurs");	   
 	    btnEncherir = new JButton("Enchérir");
 	    btnEncherir.addActionListener(this);
-	    enchere = new JTextField("Saisir votre enchère", 20);	
+	    enchere = new JTextField("Saisir votre enchère", 20);		
+	    enchere.addMouseListener(new MouseAdapter(){
+            @Override
+            public void mouseClicked(MouseEvent e){
+            	enchere.setText("");
+            }
+        });
 	    
 		try {
 			icon = ImageIO.read(new File("images/grossePatoune.png"));
