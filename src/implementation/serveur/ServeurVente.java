@@ -17,8 +17,8 @@ import interfaces.IServeurVente;
 
 public class ServeurVente extends UnicastRemoteObject implements IServeurVente, Serializable {
 
-	private final int portConnexion = 8811;
-	private String nomServeur;
+	private final int portConnexion = 1099;
+	private String nomServeur = "implementation.serveur.ServeurVente";
 	private final static int NB_MIN_ACHETEURS = 1;
 	
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);//permet gestion des affichages consoles
@@ -33,13 +33,7 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente, 
 	
 	
 	protected ServeurVente() throws RemoteException {
-		try {
-			this.nomServeur  = "rmi://" + InetAddress.getLocalHost().getHostAddress() + "/serveur";
-			LOGGER.info("adresse du serveur: " + this.nomServeur);
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
 		this.participants = new ListeInscrits();
 		this.listeObjsVentes = new ListeObjetEnVente();
 		this.objVente = null;

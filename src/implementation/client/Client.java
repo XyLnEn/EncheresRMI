@@ -140,8 +140,7 @@ public class Client extends UnicastRemoteObject implements IAcheteur, Serializab
 	public static IServeurVente bindingClient(String adresse,int portConnexion) {
 		IServeurVente serveurVente = null;
 		try {
-			Registry registry = LocateRegistry.getRegistry(portConnexion);
-			serveurVente = (IServeurVente)registry.lookup(adresse);
+			serveurVente = (IServeurVente)LocateRegistry.getRegistry(adresse, portConnexion).lookup("implementation.serveur.ServeurVente");
 			
 		} catch (AccessException e) {
 			// TODO Auto-generated catch block

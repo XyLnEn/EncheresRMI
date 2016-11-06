@@ -18,8 +18,8 @@ public class IHMInscription extends JFrame implements IHM, ActionListener {
 
 	private static final long serialVersionUID = 1L;
 	
-	private final int portConnexion = 8811;
-	private String nomServeur;
+	private final int portConnexion = 1099;
+	private String nomServeur = "implementation.serveur.ServeurVente";
 
 	private Client client;
 	private IHMPrincipal ihmPrincipal;
@@ -72,7 +72,7 @@ public class IHMInscription extends JFrame implements IHM, ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		String texte = (labelPseudo.getText());
 		client.setNom(texte);
-		this.nomServeur = "rmi://" + labelAdresse.getText() + "/serveur";
+		this.nomServeur = labelAdresse.getText();
 		client.setServ(client.bindingClient(nomServeur,portConnexion));
 		this.travaillerTermine();
 	}
