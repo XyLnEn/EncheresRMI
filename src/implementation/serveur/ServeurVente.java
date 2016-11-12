@@ -81,7 +81,7 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente, 
 	 * @see interfaces.IServeurVente#inscriptionAcheteur(java.lang.String, interfaces.IAcheteur)
 	 */
 	@Override
-	public void inscriptionAcheteur(String pseudo, IAcheteur acheteur) throws RemoteException { //L'inscription marchera 
+	public synchronized void inscriptionAcheteur(String pseudo, IAcheteur acheteur) throws RemoteException { //L'inscription marchera 
 		LOGGER.info("Demande d'inscription de " + pseudo + " bien reçue");
 		try {
 			while(venteEnCours) {

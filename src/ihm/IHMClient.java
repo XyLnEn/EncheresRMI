@@ -159,6 +159,9 @@ public class IHMClient extends JFrame implements IHM, ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		client.cancelTimer();
 		String texteEnchere = (enchere.getText());
+		if (texteEnchere.equals("")) {
+			texteEnchere = "0";
+		}
 		client.envoiRencherir(Integer.parseInt(texteEnchere));
 	}
 	
