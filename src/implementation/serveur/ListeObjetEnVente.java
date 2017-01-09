@@ -13,18 +13,6 @@ public class ListeObjetEnVente implements Serializable {
 	
 
 	public ListeObjetEnVente() {
-//		try{
-//			BufferedReader br = new BufferedReader(new FileReader("ressources/listeObjet.txt"));
-//			String ligne;
-//			while ((ligne = br.readLine()) != null){
-//				objetsVentes.add(new ObjetEnVente(ligne.split(", ")[0], ligne.split(", ")[1], Integer.parseInt(ligne.split(", ")[2]), ligne.split(", ")[3]));
-//			}
-//			br.close(); 
-//		}		
-//		catch (Exception e){
-//			e.printStackTrace();
-//		}
-		
 		objetsVentes = new ArrayList<ObjetEnVente>();
 	}
 	
