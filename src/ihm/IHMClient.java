@@ -28,7 +28,7 @@ import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 
 public class IHMClient extends JFrame implements IHM, ActionListener {
-	
+
 	private static final long serialVersionUID = 1L;
 
 	private Client client;
@@ -40,22 +40,18 @@ public class IHMClient extends JFrame implements IHM, ActionListener {
 	private JPanel panelImage;
 	private JPanel panelEnchere;
 	private JPanel panelObjet;
-	
-//	private JLabel labelNom;
+
 	private JTextArea labelDescr;
-    private JLabel labelPrixObject;
-    private JLabel labelInfoVendu;
-    private JLabel labelImage;
-    
-    private JButton btnEncherir;
-    
-    private JTextField enchere;
-    
-    private Image icon = null;
-    
-    /**
-     * 
-     */
+	private JLabel labelPrixObject;
+	private JLabel labelInfoVendu;
+	private JLabel labelImage;
+
+	private JButton btnEncherir;
+
+	private JTextField enchere;
+
+	private Image icon = null;
+
 	public IHMClient(Client c, IHMPrincipal p) {
 		client = c;
 		ihmPrincipal = p;
@@ -65,70 +61,64 @@ public class IHMClient extends JFrame implements IHM, ActionListener {
 	    this.setLocationRelativeTo(null);
 	    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);             	    	    
 	}
-	
-	/**
-	 * 
-	 */
+
 	private void construireIHM() {
 		panelPrincipal = new JPanel();
 		panelPrincipal.setLayout(new GridLayout(1, 2, 5, 5));
-		
-//		labelNom = new JLabel("Une grosse patoune");
-		labelDescr = new JTextArea(); //"Description de l'objet : " + "blablablasssssssssssssssssssssssssssssssssssssssssss"
+		labelDescr = new JTextArea(); 
 		labelDescr.setLineWrap(true);
 		labelDescr.setWrapStyleWord(true);
 		labelDescr.setOpaque(false);
 		labelDescr.setEditable(false);
-		
-		labelPrixObject = new JLabel(); //"20 €"
+
+		labelPrixObject = new JLabel();
 		labelInfoVendu = new JLabel("Pas encore d'acheteurs");	   
 	    btnEncherir = new JButton("Enchérir");
 	    btnEncherir.addActionListener(this);
 	    enchere = new JTextField("Saisir votre enchère", 20);		
 	    enchere.addMouseListener(new MouseAdapter(){
-            @Override
-            public void mouseClicked(MouseEvent e){
-            	enchere.setText("");
-            }
-        });
-	    
+	    @Override
+	    public void mouseClicked(MouseEvent e){
+		enchere.setText("");
+	    }
+	});
+
 		try {
 			icon = ImageIO.read(new File("images/grossePatoune.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		labelImage = new JLabel();
+
+	    labelImage = new JLabel();
 	    labelImage.setIcon(new ImageIcon(icon.getScaledInstance(250, 250, Image.SCALE_DEFAULT)));
 	    labelImage.setBorder(LineBorder.createGrayLineBorder());
-	    	
+
 	    panelImage = new JPanel();
 	    panelImage.add(labelImage);
-	    
+
 	    panelEnchere = new JPanel();	    	   
 	    panelEnchere.add(enchere);	 
 	    panelEnchere.add(btnEncherir); 
-	    
+
 	    panelObjet = new JPanel();
 	    panelObjet.setLayout(new GridLayout(4, 1));
-	    
-//	    panelObjet.add(labelNom);
+
 	    panelObjet.add(labelDescr);
 	    panelObjet.add(labelPrixObject);
 	    panelObjet.add(panelEnchere);
 	    panelObjet.add(labelInfoVendu);
 
-	    
+
 	    panelPrincipal.add(panelImage);
 	    panelPrincipal.add(panelObjet);
-	    
+
 	    this.setContentPane(panelPrincipal);
 	}
-	
+
 	public void changerVisibilite(boolean b) {
 		this.setVisible(b);
 	}
-	
+
 	public IAcheteur getClient() {
 		return client;
 	}
@@ -136,7 +126,7 @@ public class IHMClient extends JFrame implements IHM, ActionListener {
 	public IHMInscription getIhmInscri() {
 		return ihmInscri;
 	}
-	
+
 
 
 	@Override
@@ -144,15 +134,15 @@ public class IHMClient extends JFrame implements IHM, ActionListener {
 		labelDescr.setText("Description de l'objet : " + client.getObj().getDescription());
 		labelPrixObject.setText(client.getPrixObjEnEnchere() + "€");
 		panelObjet.setBorder(BorderFactory.createTitledBorder(client.getObj().getNom()));
-		
+
 		if(client.getNomMaxDonnateur() != null) {
 			labelInfoVendu.setText("Meilleur enchereur : " + client.getNomMaxDonnateur());
 		}
 		client.lancerTimer();
 	}
-	
+
 	public void travaillerTermine() {
-		
+
 	}
 
 	@Override
