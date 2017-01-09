@@ -18,9 +18,6 @@ import javax.swing.JTextField;
 
 public class IHMNouvelObjetEnVente extends JFrame implements IHM, ActionListener {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	
 	private Client client;
@@ -32,12 +29,7 @@ public class IHMNouvelObjetEnVente extends JFrame implements IHM, ActionListener
 	private JTextField labelDesc;
 	private JTextField labelPrix;
 	private JButton btnValidation;
-	
-	
-	
-	
-//	private JTextField labelNom;
-//	private JButton btnNom;
+
 	
 	public IHMNouvelObjetEnVente(Client c, IHMPrincipal p) {
 		client = c;
@@ -113,8 +105,6 @@ public class IHMNouvelObjetEnVente extends JFrame implements IHM, ActionListener
 
 	@Override
 	public void notifier() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
