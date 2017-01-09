@@ -37,8 +37,6 @@ public class IHMPrincipal implements IHM {
 
 	@Override
 	public void changerVisibilite(boolean b) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public void signal(String key) {
