@@ -10,11 +10,9 @@ import java.util.Map;
 public class ListeInscrits  implements Serializable {
 
 	private Map<IAcheteur, String> inscrits;
-	//private List<Participant> inscrits;
 
 	public ListeInscrits() {
 		inscrits = new Hashtable<>(); 
-				//new Vector<Participant>();
 		
 	}
 	
