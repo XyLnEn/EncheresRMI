@@ -100,7 +100,7 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente, 
 
 /******************************Debut des methodes pour realiser l'enchere******************************/
 	
-	/** @author Lenny Lucas
+	/** 
 	 * methode qui determine quelle enchere est la gagnante
 	 * @return gagnante l'enchere la plus eleve 
 	 */
@@ -121,7 +121,7 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente, 
 		notifyAll();
 	}
 	
-	/**@author Lenny Lucas
+	/**
 	 * methode qui previens les clients que l'enchere est finie
 	 */
 	public void finEnchere() {
@@ -147,9 +147,8 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente, 
 		}
 	}
 	
-	/**@author Lenny Lucas
+	/**
 	 * methode qui previent les clients que le round est terminé. On envoie le nom du gagnant actuel avec la somme proposée
-	 * @param gagnante
 	 */
 	public void FinRoundEnchere(Enchere gagnante) {
 		for (Map.Entry<IAcheteur, String> entry : participants.entrySet()) {//iteration sur chaque inscrits
@@ -162,9 +161,8 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente, 
 		}
 	}
 	
-	/**@author Lenny Lucas
+	/**
 	 * methode qui recupere la meilleure enchere et decide si la vente est finie ou si il faut effectuer un nouveau tour.
-	 * 
 	 */
 	public void realiserRoundEnchere() {
 		Enchere gagnante = getBestEnchere();
@@ -222,8 +220,7 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente, 
 		}
 	}
 	
-	/**@author Lenny Lucas
-	 * methode qui annonce le nouvel objet a vendre
+	/**methode qui annonce le nouvel objet a vendre
 	 * @throws RemoteException
 	 */
 	public void DebutVente() throws RemoteException {
@@ -240,11 +237,9 @@ public class ServeurVente extends UnicastRemoteObject implements IServeurVente, 
 		
 	}
 	
-	/**@author Lenny Lucas
-	 * prepare le serveur pour la connexion des clients
-	 * @param adresse
-	 * @param serveur
-	 */
+	/**
+	 *prepare le serveur pour la connexion des clients
+	*/
 	public void bindingServeur(String adresse, int portConnexion) {
 		try {
 			LOGGER.info("adresse du serveur: " + InetAddress.getLocalHost().getHostAddress());
