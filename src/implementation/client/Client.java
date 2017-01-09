@@ -41,15 +41,8 @@ public class Client extends UnicastRemoteObject implements IAcheteur, Serializab
 			}
 		}
 	}
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 
-//	private final static int portConnexion = 8811;
-//	private final static String nomServeur = "//localhost:" + portConnexion + "/serveur";
-	
+	private static final long serialVersionUID = 1L;
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);//permet gestion des affichages consoles
 
 /****************Pour le Client******************/
@@ -95,27 +88,11 @@ public class Client extends UnicastRemoteObject implements IAcheteur, Serializab
 		timer.schedule(new ChronoFinEnchere(this), 30000);
 	}
 	
-//	/**
-//	 * permet d'entrer un prix pour rencherir. Sera remplac�e par une methode de l'interface
-//	 */
-//	public void envoyerPrix(){
-//		Scanner sc = new Scanner(System.in);
-//		LOGGER.info("nouveau prix : ");
-//		int newprix = sc.nextInt();
-//		if(this.getState() == EtatClient.ENCHERE) {
-//			this.envoiRencherir(newprix);
-//		}
-//	}
-
 	@Override
 	public void nouvelleSoumission(ObjetEnVente Objet, int prix) throws RemoteException {
 		this.setState(EtatClient.ENCHERE);
 		obj = Objet;
 		this.prixObjEnEnchere = prix;
-//		LOGGER.info("objet:" + obj.getNom());
-//		LOGGER.info("descr:" + obj.getDescription());
-//		LOGGER.info("prix:" + this.getPrixObjEnEnchere());
-//		this.envoyerPrix();
 		obsClient.notifier();
 	}
 
@@ -131,8 +108,6 @@ public class Client extends UnicastRemoteObject implements IAcheteur, Serializab
 		this.setState(EtatClient.ENCHERE);
 		this.prixObjEnEnchere = prix;
 		nomMaxDonnateur = pseudo;
-//		LOGGER.info("Nouveau prix : " + prix);
-//		LOGGER.info("envoye par " + pseudo);
 		obsClient.notifier();
 	}
 	
@@ -143,13 +118,10 @@ public class Client extends UnicastRemoteObject implements IAcheteur, Serializab
 			serveurVente = (IServeurVente)LocateRegistry.getRegistry(adresse, portConnexion).lookup("implementation.serveur.ServeurVente");
 			
 		} catch (AccessException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (NotBoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		LOGGER.info("connexion etablie");
@@ -174,7 +146,6 @@ public class Client extends UnicastRemoteObject implements IAcheteur, Serializab
 				serv.rencherir(prix, this);
 				serv.tempsEcoule(this);
 			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -239,7 +210,6 @@ public class Client extends UnicastRemoteObject implements IAcheteur, Serializab
 	}
 	
 	public void checkConnexion() {
-		//verifie que le lien est encore en place
 	}
 	
 }
